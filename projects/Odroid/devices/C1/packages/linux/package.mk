@@ -58,6 +58,7 @@ post_patch() {
   cp $PKG_BUILD/arch/arm/configs/$KERNEL_CFG_FILE $PKG_BUILD/.config
 
   sed -i -e "s|^CONFIG_SQUASHFS[[:space:]]*=.*$|CONFIG_SQUASHFS=y|" $PKG_BUILD/.config
+  sed -i -e "s|^\#\ CONFIG_SQUASHFS\ is\ not\ set*$|CONFIG_SQUASHFS=y|" $PKG_BUILD/.config
   sed -i -e "s|^CONFIG_VFAT_FS[[:space:]]*=.*$|CONFIG_VFAT_FS=y|" $PKG_BUILD/.config
   sed -i -e "s|^CONFIG_NLS_CODEPAGE_437[[:space:]]*=.*$|CONFIG_NLS_CODEPAGE_437=y|" $PKG_BUILD/.config
 

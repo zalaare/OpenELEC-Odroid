@@ -15,7 +15,7 @@
     KERNEL_CFG_FILE="odroidc_defconfig"
 
   # Kernel target for u-boot (default 'uImage' if BOOTLOADER=u-boot) (uImage / zImage)
-    KERNEL_UBOOT_TARGET="zImage"
+    KERNEL_UBOOT_TARGET="uImage"
 
   # Additional kernel make parameters (for example to specify the u-boot loadaddress)
     KERNEL_MAKE_EXTRACMD="dtbs"
