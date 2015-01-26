@@ -1,0 +1,27 @@
+diff -Nur a/src/lib/adapter/Exynos/ExynosCECAdapterCommunication.cpp b/src/lib/adapter/Exynos/ExynosCECAdapterCommunication.cpp
+--- a/src/lib/adapter/Exynos/ExynosCECAdapterCommunication.cpp	2014-10-28 15:20:50.000000000 +0000
++++ b/src/lib/adapter/Exynos/ExynosCECAdapterCommunication.cpp	2015-01-25 23:42:05.324537990 +0000
+@@ -161,16 +161,14 @@
+ 
+ uint16_t CExynosCECAdapterCommunication::GetPhysicalAddress(void)
+ {
+-  uint16_t phys_addr = CEC_DEFAULT_PADDR;
++  char* addr_string = getenv("CEC_HDMI_PORT");
++  if (addr_string == NULL)
++    return CEC_DEFAULT_PHYSICAL_ADDRESS;
++  int addr_int = atoi(addr_string);
++  if (addr_int == 0)
++    return CEC_DEFAULT_PHYSICAL_ADDRESS;
+ 
+-  FILE *f = fopen(CEC_PADDR_NAME, "r");
+-  if(f) {
+-    if(fscanf(f, "%hu", &phys_addr) != 1)
+-      phys_addr = CEC_DEFAULT_PADDR;
+-
+-    fclose(f);
+-  }
+-  return phys_addr;
++  return 0x1000 * addr_int;
+ }
+ 
+ 
