@@ -233,19 +233,23 @@ elif [ "$BOOTLOADER" = "u-boot" ]; then
     fi
 
     echo "image: installing u-boot bootloader..."
-    if [ "$RELEASE_DIR/3rdparty/bootloader/SPL" ]; then
+    if [ -f "$RELEASE_DIR/3rdparty/bootloader/SPL" ]; then
       dd if="$RELEASE_DIR/3rdparty/bootloader/SPL" of="$DISK" bs=512 seek=2 conv=notrunc
-    elif [ "$RELEASE_DIR/3rdparty/bootloader/u-boot.imx" ]; then
+    elif [ -f "$RELEASE_DIR/3rdparty/bootloader/u-boot.imx" ]; then
       dd if="$RELEASE_DIR/3rdparty/bootloader/u-boot.imx" of="$DISK" bs=512 seek=2 conv=notrunc
     fi
 
     echo "image: copying files to part1..."
     cp $TARGET_IMG/$IMAGE_NAME.kernel "$OE_TMP/KERNEL"
     cp $TARGET_IMG/$IMAGE_NAME.system "$OE_TMP/SYSTEM"
-    cp $RELEASE_DIR/3rdparty/bootloader/u-boot.img "$OE_TMP"
+    if [ -f $RELEASE_DIR/3rdparty/bootloader/u-boot.img ] ; then
+      cp $RELEASE_DIR/3rdparty/bootloader/u-boot.img "$OE_TMP"
+    fi
 
-    for dtb in $(ls $RELEASE_DIR/3rdparty/bootloader/*.dtb) ; do
-      cp "$dtb" "$OE_TMP"
+    for dtb in $RELEASE_DIR/3rdparty/bootloader/*.dtb ; do
+      if [ -f $dtb ] ; then
+        cp "$dtb" "$OE_TMP"
+      fi
     done
 fi # bootloader
 
