@@ -21,7 +21,10 @@
 
 echo "getting sources..."
   if [ ! -d xf86-video-armsoc.git ]; then
-    git clone https://github.com/dsd/xf86-video-armsoc.git -b r4p0
+    case $1 in 
+      U2|u2|u3|U3|x2|X2) git clone https://github.com/dsd/xf86-video-armsoc.git -b r4p0 ;;
+      XU3|xu3) git clone git://anongit.freedesktop.org/xorg/driver/xf86-video-armsoc.git ;;
+    esac
   fi
 
   cd xf86-video-armsoc

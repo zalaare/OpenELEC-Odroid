@@ -17,7 +17,10 @@
 ################################################################################
 
 PKG_NAME="xf86-video-armsoc"
-PKG_VERSION="29356f5"
+case $DEVICE in
+  U2) PKG_VERSION="29356f5" ;;
+  XU3) PKG_VERSION="1.1.0" ;;
+esac
 PKG_REV="1"
 PKG_ARCH="arm"
 PKG_LICENSE=""

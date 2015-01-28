@@ -1,6 +1,16 @@
---- linux-odroid/arch/arm/configs/odroidxu3_defconfig	2014-10-23 15:58:15.000000000 +0000
-+++ linux-odroid/arch/arm/configs/odroidxu3_defconfig	2014-10-23 16:28:59.078866024 +0000
-@@ -2321,6 +2307,7 @@
+diff -Nur a/arch/arm/configs/odroidxu3_defconfig b/arch/arm/configs/odroidxu3_defconfig
+--- a/arch/arm/configs/odroidxu3_defconfig	2014-11-26 17:07:21.000000000 +0000
++++ b/arch/arm/configs/odroidxu3_defconfig	2015-01-27 02:35:12.947737313 +0000
+@@ -1547,7 +1547,7 @@
+ # CONFIG_AT76C50X_USB is not set
+ # CONFIG_USB_ZD1201 is not set
+ # CONFIG_USB_NET_RNDIS_WLAN is not set
+-# CONFIG_RTL8187 is not set
++CONFIG_RTL8187=m
+ # CONFIG_MAC80211_HWSIM is not set
+ # CONFIG_WIFI_CONTROL_FUNC is not set
+ CONFIG_ATH_COMMON=m
+@@ -2343,6 +2343,7 @@
  CONFIG_DVB_USB_LME2510=m
  CONFIG_DVB_USB_MXL111SF=m
  CONFIG_DVB_USB_RTL28XXU=m
@@ -8,7 +18,7 @@
  CONFIG_SMS_USB_DRV=m
  CONFIG_DVB_B2C2_FLEXCOP_USB=m
  # CONFIG_DVB_B2C2_FLEXCOP_USB_DEBUG is not set
-@@ -2483,6 +2470,7 @@
+@@ -2505,6 +2506,7 @@
  #
  # Multistandard (satellite) frontends
  #
@@ -16,7 +26,7 @@
  CONFIG_DVB_STB0899=m
  CONFIG_DVB_STB6100=m
  CONFIG_DVB_STV090x=m
-@@ -2511,6 +2499,7 @@
+@@ -2533,6 +2535,7 @@
  CONFIG_DVB_TUNER_CX24113=m
  CONFIG_DVB_TDA826X=m
  CONFIG_DVB_CX24116=m
@@ -24,7 +34,7 @@
  CONFIG_DVB_SI21XX=m
  CONFIG_DVB_TS2020=m
  CONFIG_DVB_DS3000=m
-@@ -2848,13 +2837,13 @@
+@@ -2870,13 +2873,13 @@
  CONFIG_HID_PICOLCD_LEDS=y
  CONFIG_HID_PICOLCD_CIR=y
  CONFIG_HID_PRIMAX=m
@@ -39,3 +49,12 @@
  CONFIG_HID_SUNPLUS=m
  CONFIG_HID_GREENASIA=m
  CONFIG_GREENASIA_FF=y
+@@ -3381,7 +3384,7 @@
+ # CONFIG_ASUS_OLED is not set
+ # CONFIG_PANEL is not set
+ # CONFIG_RTLLIB is not set
+-# CONFIG_R8712U is not set
++CONFIG_R8712U=m
+ # CONFIG_RTS5139 is not set
+ # CONFIG_TRANZPORT is not set
+ # CONFIG_LINE6_USB is not set

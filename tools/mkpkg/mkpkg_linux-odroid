@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+
 ################################################################################
 #      This file is part of OpenELEC - http://www.openelec.tv
 #      Copyright (C) 2009-2012 Stephan Raue (stephan@openelec.tv)
@@ -19,59 +20,75 @@
 #  http://www.gnu.org/copyleft/gpl.html
 ################################################################################
 
+TOPDIR=$(pwd)
+GIT_FLAGS="-q"
+
 usage() {
-  echo "$0 XU3|U2"
-  echo " ex. $0 XU3"
+  echo "$0 XU3|U2|C1"
+  echo "  ex. $0 XU3"
   exit 1
 }
 
-echo "getting sources..."
+sources() {
+  echo -n "Getting Sources ... "
+
+  cd $TOPDIR
+
+  if [ ! -d linux-odroid ]; then
+    git clone $GIT_FLAGS git://github.com/hardkernel/linux.git linux-odroid
+  fi
+
+  cd $TOPDIR/linux-odroid
+
+  git reset $GIT_FLAGS --hard
+  git clean $GIT_FLAGS -fd
+
   case $1 in
-    experimental|ex|ng)
-      NG=1
-      if [ ! -d linux-odroid-ng ]; then
-        git clone https://github.com/abhijeet-dev/linux-samsung linux-odroid-ng
-      fi
-
-      cd linux-odroid-ng
-      ;;
-    *)
-      NG=0
-      if [ ! -d linux-odroid ]; then
-        git clone git://github.com/hardkernel/linux.git linux-odroid
-      fi
-
-      cd linux-odroid
-      ;;
+    XU3|xu3) git checkout $GIT_FLAGS -m odroidxu3-3.10.y ;;
+    U2|U3|u2|u3) git checkout $GIT_FLAGS -m odroid-3.8.y ;;
+    c1|C1) git checkout $GIT_FLAGS -m odroidc-3.10.y ;;
+    *) usage ;;
   esac
 
-  git reset --hard
-  git clean -fid
-  case $1 in
-    XU3|xu3) git checkout -m odroidxu3-3.10.y ; BUILD=xu3 ;;
-    U2|U3|u2|u3) git checkout -m odroid-3.8.y ; BUILD=u2 ;;
-    experimental|ex|ng) git checkout -m xu3_3_17 ; BUILD=ng ;;
-  esac
-  git pull
-  [ -n $2 ] && git reset --hard $2
+  git pull $GIT_FLAGS
+
+  [ -n $2 ] && git reset $GIT_FLAGS --hard $2
   GIT_REV=`git log -n1 --format=%h`
   sed -i "s|^EXTRAVERSION[[:space:]]*=.*$|EXTRAVERSION = +$GIT_REV|" Makefile
   VERSION="$(grep \^VERSION Makefile | awk '{print $3}').$(grep \^PATCHLEVEL Makefile | awk '{print $3}').$(grep \^SUBLEVEL Makefile | awk '{print $3}')+$GIT_REV"
-  cd ..
 
-echo "copying sources..."
+  echo "DONE"
+}
+
+package() {
+  cd $TOPDIR
+
+  if [ -d linux-$VERSION ]; then
+    echo -n "Cleaning Old Release ... "
+    rm -rf linux-$VERSION
+    echo "DONE"
+  fi
+
+  echo -n "Copying GIT to Release ... "
+  cp -RP linux-odroid linux-$VERSION
+  echo "DONE"
+
+  echo -n "Cleaning Source ... "
+  rm -rf linux-$VERSION/.git
+  echo "DONE"
+
+  echo -n "Compressing Source ... "
+  tar cJf linux-$VERSION.tar.xz linux-$VERSION
+  echo "DONE"
+
+  echo -n "Final Cleanup ... "
   rm -rf linux-$VERSION
-  case $NG in
-    0) cp -a linux-odroid linux-odroid-$BUILD-$VERSION ;;
-    1) cp -a linux-odroid-ng linux-odroid-$BUILD-$VERSION ;;
-  esac
+  echo "DONE"
+}
 
-echo "cleaning sources..."
-  rm -rf linux-odroid-$BUILD-$VERSION/.git
-
-echo "packing sources..."
-  tar cJf linux-odroid-$BUILD-$VERSION.tar.xz linux-odroid-$BUILD-$VERSION
-
-echo "remove temporary sourcedir..."
-  rm -rf linux-odroid-$BUILD-$VERSION
-
+if [ -z $1 ]; then
+  usage
+else
+  sources $1
+  package $1
+fi

@@ -1,0 +1,21 @@
+--- xbmc-13-0f3db05/system/settings/settings.xml.orig	2014-11-04 19:31:55.411680520 -0500
++++ xbmc-13-0f3db05/system/settings/settings.xml	2014-11-04 19:32:17.051519170 -0500
+@@ -2403,7 +2403,7 @@
+         </setting>
+         <setting id="audiooutput.config" type="integer" label="337" help="36361">
+           <level>2</level>
+-          <default>2</default>
++          <default>1</default>
+           <constraints>
+             <options>
+               <option label="338">1</option>
+@@ -2415,7 +2415,7 @@
+         </setting>
+         <setting id="audiooutput.samplerate" type="integer" label="458" help="36523">
+           <level>2</level>
+-          <default>48000</default>
++          <default>44100</default>
+           <dependencies>
+             <dependency type="visible">
+               <and>
+

@@ -17,7 +17,11 @@
 ################################################################################
 
 PKG_NAME="linux"
-PKG_VERSION="3.8.13+0c5ca23"
+case $DEVICE in
+  U2)  PKG_VERSION="3.8.13+0c5ca23" ;;
+  XU3) PKG_VERSION="3.10.60+d37e8a3" ;;
+  C1)  PKG_VERSION="3.10.65+c0ca589" ;;
+esac
 PKG_URL="$ODROID_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_REV="1"
 PKG_ARCH="any"
@@ -208,7 +212,7 @@ makeinstall_init() {
 }
 
 post_install() {
-  ln -sfn /storage/.config/smsc95xx_mac_addr $INSTALL/etc/smsc95xx_mac_addr
+  [ "$DEVICE" = U2 ] && ln -sfn /storage/.config/smsc95xx_mac_addr $INSTALL/etc/smsc95xx_mac_addr
   mkdir -p $INSTALL/lib/firmware/
     ln -sfn /storage/.config/firmware/ $INSTALL/lib/firmware/updates
 }

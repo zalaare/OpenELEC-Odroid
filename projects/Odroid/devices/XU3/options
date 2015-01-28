@@ -47,6 +47,9 @@
   # KODI Player implementation to use : (odroid-mfc / odroid-amcodec)
     KODIPLAYER_DRIVER="odroid-mfc"
 
+  # build and install CEC adapter support (yes / no)
+    CEC_SUPPORT="yes"
+
   # Auto resize of Storage partition (during build of SD image) (yes / no) : Additional
     RESIZE="yes"
 
