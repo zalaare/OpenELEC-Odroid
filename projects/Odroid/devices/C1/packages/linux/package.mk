@@ -59,6 +59,8 @@ post_patch() {
 
   sed -i -e "s|^CONFIG_SQUASHFS[[:space:]]*=.*$|CONFIG_SQUASHFS=y|" $PKG_BUILD/.config
   sed -i -e "s|^\#\ CONFIG_SQUASHFS\ is\ not\ set*$|CONFIG_SQUASHFS=y|" $PKG_BUILD/.config
+  sed -i -e "s|^\#\ CONFIG_MALI400_DEBUG\ is\ not\ set*$|CONFIG_MALI40_DEBUG=y|" $PKG_BUILD/.config
+  sed -i -e "s|^\#\ CONFIG_UMP_DEBUG\ is\ not\ set*$|CONFIG_UMP_DEBUG=y|" $PKG_BUILD/.config
   sed -i -e "s|^CONFIG_VFAT_FS[[:space:]]*=.*$|CONFIG_VFAT_FS=y|" $PKG_BUILD/.config
   sed -i -e "s|^CONFIG_NLS_CODEPAGE_437[[:space:]]*=.*$|CONFIG_NLS_CODEPAGE_437=y|" $PKG_BUILD/.config
 
