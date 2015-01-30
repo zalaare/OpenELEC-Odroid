@@ -72,6 +72,9 @@
   # additional Firmware to use : Additional
     FIRMWARE="$FIRMWARE rtlnic-firmware samsung-firmware wlan-firmware"
 
+  # build with afpfs-ng support (mounting AFP shares with KODI) (yes / no) : Override
+    KODI_AFP_SUPPORT="yes"
+
   # build and install PPP support : Override
     PPTP_SUPPORT="no"
 

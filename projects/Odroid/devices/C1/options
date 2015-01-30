@@ -2,6 +2,12 @@
 # setup system defaults
 ################################################################################
 
+  # Setup controls which processor should be targeted for generated code. : Override
+    TARGET_ARCH=arm
+    TARGET_CPU="cortex-a5"
+    TARGET_FLOAT="hard"
+    TARGET_FPU="neon"
+
   # u-boot version to use (default)
     UBOOT_VERSION="default"
 
@@ -46,7 +52,3 @@
 
   # Auto resize of Storage partition (during build of SD image) (yes / no) : Additional
     RESIZE="yes"
-
-  # Set which boot.scr file we want to default : Additional
-  # {720p,720p-noedid,1080p,1080p-noedid,auto,debug}
-    DEFAULT_SCR=auto

@@ -46,6 +46,7 @@ make_host() {
 }
 
 makeinstall_host() {
-  mkdir -p $SYSROOT_PREFIX/opt/toolchain
-    cp -PR * $SYSROOT_PREFIX/opt/toolchain
+  rm -f share/aclocal/pkg.m4
+  rm -r share/doc
+  cp -PR * $ROOT/$TOOLCHAIN
 }

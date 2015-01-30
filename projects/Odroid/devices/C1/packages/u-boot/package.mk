@@ -40,8 +40,8 @@ pre_configure_target() {
 }
 
 make_target() {
-  PATH="$SYSROOT_PREFIX/opt/toolchain/bin:$PATH" make CROSS_COMPILE="arm-none-eabi-" $UBOOT_CONFIG
-  PATH="$SYSROOT_PREFIX/opt/toolchain/bin:$PATH" make CROSS_COMPILE="arm-none-eabi-" HOSTCC="$HOST_CC" HOSTSTRIP="true"
+  make CROSS_COMPILE="arm-none-eabi-" $UBOOT_CONFIG
+  make CROSS_COMPILE="arm-none-eabi-" HOSTCC="$HOST_CC" HOSTSTRIP="true"
 }
 
 makeinstall_target() {

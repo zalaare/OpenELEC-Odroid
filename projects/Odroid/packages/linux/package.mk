@@ -97,10 +97,6 @@ post_patch() {
     sed -i -e "s|^CONFIG_ISCSI_IBFT=.*$|# CONFIG_ISCSI_IBFT is not set|" $PKG_BUILD/.config
   fi
 
-  # disable some drivers (they don't compile at this time (gcc-4.8)
-  sed -i -e "s|^CONFIG_HID_SONY=.*$|# CONFIG_HID_SONY is not set|" $PKG_BUILD/.config
-  sed -i -e "s|^CONFIG_DVB_B2C2_FLEXCOP_USB=.*$|# CONFIG_DVB_B2C2_FLEXCOP_USB is not set|" $PKG_BUILD/.config
-
   make -C $PKG_BUILD oldconfig
 }
 

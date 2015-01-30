@@ -27,10 +27,8 @@ fi
 # generate uInitrd
   $SCRIPTS/install initramfs
   mkdir -p $RELEASE_DIR/target
-    mkimage -A arm -T ramdisk -n RootFS\ [$PROJECT] -C none -d $INSTALL/../initramfs.cpio \
+    mkimage -A arm -O linux -T ramdisk -n RootFS\ [$PROJECT] -C none -d $INSTALL/../initramfs.cpio \
       $RELEASE_DIR/target/INITRD
-    mkimage -A arm -T kernel -n Linux\ [$PROJECT-$DEVICE] -C none -d $BUILD/linux-*/arch/arm/boot/$KERNEL_UBOOT_TARGET \
-      $INSTALL/../KERNEL
  ( cd $RELEASE_DIR
      md5sum -t target/INITRD > target/INITRD.md5 )
 
