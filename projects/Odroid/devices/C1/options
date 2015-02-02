@@ -52,3 +52,6 @@
 
   # Auto resize of Storage partition (during build of SD image) (yes / no) : Additional
     RESIZE="yes"
+
+  # Enable Amlogic Remote
+    AMREMOTE_SUPPORT="yes"

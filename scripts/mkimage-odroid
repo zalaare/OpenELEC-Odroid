@@ -120,12 +120,7 @@ trap cleanup SIGINT
   # copy files
   echo "image: copying files to partition 1..."
   echo "  KERNEL"
-  if [ "$DEVICE" = "C1" ]; then
-    install -D $INSTALL/../KERNEL "$OE_TMP/KERNEL"
-    ( cd $RELEASE_DIR ;  md5sum -t target/KERNEL > target/KERNEL.md5; )
-  else
-    install -D $RELEASE_DIR/target/KERNEL "$OE_TMP/KERNEL"
-  fi
+  install -D $RELEASE_DIR/target/KERNEL "$OE_TMP/KERNEL"
   echo "  SYSTEM"
   install -D $RELEASE_DIR/target/SYSTEM "$OE_TMP/SYSTEM"
   echo "  INITRD"

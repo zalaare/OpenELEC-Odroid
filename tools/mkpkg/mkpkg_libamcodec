@@ -1,0 +1,74 @@
+#!/bin/bash
+
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2012 Stephan Raue (stephan@openelec.tv)
+#
+#  This Program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2, or (at your option)
+#  any later version.
+#
+#  This Program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.tv; see the file COPYING.  If not, write to
+#  the Free Software Foundation, 51 Franklin Street, Suite 500, Boston, MA 02110, USA.
+#  http://www.gnu.org/copyleft/gpl.html
+################################################################################
+
+TOPDIR=$(pwd)
+GIT_FLAGS="-q"
+
+sources() {
+  echo -n "Getting Sources ... "
+
+  cd $TOPDIR
+
+  if [ ! -d libamcodec.git ]; then
+    git clone $GIT_FLAGS https://github.com/mdrjr/c1_aml_libs.git libamcodec.git
+  fi
+
+  cd $TOPDIR/libamcodec.git
+
+  git reset $GIT_FLAGS --hard
+  git clean $GIT_FLAGS -fd
+  git pull $GIT_FLAGS
+
+  [ -n $2 ] && git reset $GIT_FLAGS --hard $2
+  GIT_REV=`git log -n1 --format=%h`
+
+  echo "DONE"
+}
+
+package() {
+  cd $TOPDIR
+
+  if [ -d libamcodec-$GIT_REV ]; then
+    echo -n "Cleaning Old Release ... "
+    rm -rf libamcodec-$GIT_REV
+    echo "DONE"
+  fi
+
+  echo -n "Copying GIT to Release ... "
+  cp -RP libamcodec.git libamcodec-$GIT_REV
+  echo "DONE"
+
+  echo -n "Cleaning Source ... "
+  rm -rf libamcodec-$GIT_REV/.git
+  echo "DONE"
+
+  echo -n "Compressing Source ... "
+  tar cJf libamcodec-$GIT_REV.tar.xz libamcodec-$GIT_REV
+  echo "DONE"
+
+  echo -n "Final Cleanup ... "
+  rm -rf libamcodec-$GIT_REV
+  echo "DONE"
+}
+
+sources
+package

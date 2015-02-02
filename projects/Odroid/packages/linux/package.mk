@@ -61,12 +61,22 @@ post_patch() {
 
   cp $PKG_BUILD/arch/arm/configs/$KERNEL_CFG_FILE $PKG_BUILD/.config
 
-  sed -i -e "s|^CONFIG_SQUASHFS[[:space:]]*=.*$|CONFIG_SQUASHFS=y|" $PKG_BUILD/.config
-  sed -i -e "s|^\#\ CONFIG_SQUASHFS\ is\ not\ set*$|CONFIG_SQUASHFS=y|" $PKG_BUILD/.config
-  sed -i -e "s|^\#\ CONFIG_MALI400_DEBUG\ is\ not\ set*$|CONFIG_MALI40_DEBUG=y|" $PKG_BUILD/.config
-  sed -i -e "s|^\#\ CONFIG_UMP_DEBUG\ is\ not\ set*$|CONFIG_UMP_DEBUG=y|" $PKG_BUILD/.config
-  sed -i -e "s|^CONFIG_VFAT_FS[[:space:]]*=.*$|CONFIG_VFAT_FS=y|" $PKG_BUILD/.config
-  sed -i -e "s|^CONFIG_NLS_CODEPAGE_437[[:space:]]*=.*$|CONFIG_NLS_CODEPAGE_437=y|" $PKG_BUILD/.config
+  # enable SquashFS
+  sed -i -e "s|^CONFIG_SQUASHFS[[:space:]]*=.*$|CONFIG_SQUASHFS=y|" \
+         -e "s|^# CONFIG_SQUASHFS[[:space:]].*$|CONFIG_SQUASHFS=y|" $PKG_BUILD/.config
+  # enable all compressions of SquashFS and extended attributes
+  for A in XATTR ZLIB LZO XZ ; do echo CONFIG_SQUASHFS_$A=y >> $PKG_BUILD/.config ; done
+  # disable possible other SquashFS settings
+  for A in 4K_DEVBLK_SIZE EMBEDDED; do echo "# CONFIG_SQUASHFS_$A is not set" >> $PKG_BUILD/.config ; done
+  # enable VFATFS
+  sed -i -e "s|^CONFIG_VFAT_FS[[:space:]]*=.*$|CONFIG_VFAT_FS=y|" \
+         -e "s|^# CONFIG_VFAT_FS[[:space:]].*$|CONFIG_VFAT_FS=y|" $PKG_BUILD/.config
+  # enable Native Language Support Codepage 437 (default used by vfat)
+  sed -i -e "s|^CONFIG_NLS_CODEPAGE_437[[:space:]]*=.*$|CONFIG_NLS_CODEPAGE_437=y|" \
+         -e "s|^# CONFIG_NLS_CODEPAGE_437[[:space:]].*$|CONFIG_NLS_CODEPAGE_437=y|" $PKG_BUILD/.config
+  # enable /proc/config.gz (not really needed, but nice)
+  sed -i -e "s|^CONFIG_IKCONFIG_PROC[[:space:]]*=.*$|CONFIG_IKCONFIG_PROC=y|" \
+         -e "s|^# CONFIG_IKCONFIG_PROC[[:space:]].*$|CONFIG_IKCONFIG_PROC=y|" $PKG_BUILD/.config
 
   # disable PPP support if not enabled
   if [ ! "$PPTP_SUPPORT" = yes ]; then

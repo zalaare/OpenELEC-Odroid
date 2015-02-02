@@ -1,30 +1,29 @@
-Binary files a/amadec/libamadec.so and b/amadec/libamadec.so differ
 diff -Nur a/amadec/Makefile b/amadec/Makefile
---- a/amadec/Makefile	2015-01-07 16:59:40.000000000 -0500
-+++ b/amadec/Makefile	2015-01-12 15:34:23.479060496 -0500
-@@ -1,46 +1,52 @@
+--- a/amadec/Makefile	2015-02-01 11:56:34.000000000 -0500
++++ b/amadec/Makefile	2015-02-01 12:54:13.205131366 -0500
+@@ -1,46 +1,49 @@
 -M_PREFIX=$(AML_LIBS_STAGING_DIR)/usr
 +PREFIX ?= /usr
  
 -LIB_DIR?=$(M_PREFIX)/lib
 -HEADERS_DIR?=$(M_PREFIX)/include
-+TARGET_OBJS = adec-external-ctrl.o \
-+	adec-internal-mgt.o \
-+	adec-ffmpeg-mgt.o \
-+	adec-message.o \
-+	adec-pts-mgt.o \
-+	feeder.o \
-+	adec_write.o \
-+	adec_read.o \
-+	dsp/audiodsp-ctl.o \
-+	audio_out/alsa-out.o \
-+	audio_out/aml_resample.o \
-+	audiodsp_update_format.o \
-+	spdif_api.o \
-+	pcmenc_api.o \
-+	dts_transenc_api.o \
-+	dts_enc.o \
-+	audio_out/alsactl_parser.o
++TARGET_OBJS=adec-external-ctrl.o \
++  adec-internal-mgt.o \
++  adec-ffmpeg-mgt.o \
++  adec-message.o \
++  adec-pts-mgt.o \
++  feeder.o \
++  adec_write.o \
++  adec_read.o \
++  dsp/audiodsp-ctl.o \
++  audio_out/alsa-out.o \
++  audio_out/aml_resample.o \
++  audiodsp_update_format.o \
++  spdif_api.o \
++  pcmenc_api.o \
++  dts_transenc_api.o \
++  dts_enc.o \
++  audio_out/alsactl_parser.o
  
 -TARGET_OBJS=adec-external-ctrl.o adec-internal-mgt.o adec-ffmpeg-mgt.o adec-message.o adec-pts-mgt.o feeder.o adec_write.o adec_read.o\
 -           dsp/audiodsp-ctl.o audio_out/alsa-out.o audio_out/aml_resample.o audiodsp_update_format.o spdif_api.o pcmenc_api.o dts_transenc_api.o dts_enc.o audio_out/alsactl_parser.o 
@@ -49,7 +48,7 @@ diff -Nur a/amadec/Makefile b/amadec/Makefile
  
  ifdef DOLBY_UDC
 -    CFLAGS+=-DDOLBY_USE_ARMDEC
-+	CFLAGS += -DDOLBY_USE_ARMDEC
++  CFLAGS += -DDOLBY_USE_ARMDEC
  endif
  
 -export CC CFLAGS
@@ -66,9 +65,9 @@ diff -Nur a/amadec/Makefile b/amadec/Makefile
 +	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_OBJS:%.o=%.c) -o $@
  
  install:
--	install -m 0644 libamadec.so /usr/lib/aml_libs
--	install -m 0644 include/*.h /usr/include
--	install -m 0644 *.h /usr/include
+-	install -m 0644 libamadec.so $(DESTDIR)/usr/lib/aml_libs
+-	install -m 0644 include/*.h $(DESTDIR)/usr/include
+-	install -m 0644 *.h $(DESTDIR)/usr/include
 -
 -force:
 +	install -m 0755 -d $(PREFIX)/lib $(PREFIX)/include
@@ -77,13 +76,12 @@ diff -Nur a/amadec/Makefile b/amadec/Makefile
 +	install -m 0644 *.h $(PREFIX)/include
  
  clean:
--	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)
-+	-rm -rfv *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)
- 
-     
- 
+ 	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)
+-
+-    
+-
 diff -Nur a/amadec/Makefile~ b/amadec/Makefile~
---- a/amadec/Makefile~	2015-01-07 16:59:40.000000000 -0500
+--- a/amadec/Makefile~	2015-02-01 11:56:34.000000000 -0500
 +++ b/amadec/Makefile~	1969-12-31 19:00:00.000000000 -0500
 @@ -1,46 +0,0 @@
 -M_PREFIX=$(AML_LIBS_STAGING_DIR)/usr
@@ -132,24 +130,23 @@ diff -Nur a/amadec/Makefile~ b/amadec/Makefile~
 -
 -    
 -
-Binary files a/amavutils/libamavutils.so and b/amavutils/libamavutils.so differ
 diff -Nur a/amavutils/Makefile b/amavutils/Makefile
---- a/amavutils/Makefile	2015-01-07 16:59:40.000000000 -0500
-+++ b/amavutils/Makefile	2015-01-12 15:34:23.479060496 -0500
-@@ -1,44 +1,37 @@
+--- a/amavutils/Makefile	2015-02-01 11:56:34.000000000 -0500
++++ b/amavutils/Makefile	2015-02-01 12:49:25.553531391 -0500
+@@ -1,44 +1,35 @@
 -M_PREFIX=$(AML_LIBS_STAGING_DIR)/usr
 -LIB_DIR?=$(M_PREFIX)/lib
 -HEADERS_DIR?=$(M_PREFIX)/include
 +PREFIX ?= /usr
  
 -TARGET_OBJS=amaudioutils.o amconfigutils.o amdisplayutils.o ammodule.o amsysfsutils.o Amvideoutils.o itemlist.o\
-+TARGET_OBJS = amaudioutils.o \
-+	amconfigutils.o \
-+	amdisplayutils.o \
-+	ammodule.o \
-+	amsysfsutils.o \
-+	Amvideoutils.o \
-+	itemlist.o
++TARGET_OBJS=amaudioutils.o \
++  amconfigutils.o \
++  amdisplayutils.o \
++  ammodule.o \
++  amsysfsutils.o \
++  Amvideoutils.o \
++  itemlist.o
  
 -TARGET=libamavutils.so
 +TARGET = libamavutils.so
@@ -184,9 +181,9 @@ diff -Nur a/amavutils/Makefile b/amavutils/Makefile
 -    
 -
  install:
--	install -m 0644 ${TARGET} /usr/lib/aml_libs
--	install -m 0644 include/*.h /usr/include
--	install -m 0644 include/cutils -d /usr/include/cutils
+-	install -m 0644 ${TARGET} $(DESTDIR)/usr/lib/aml_libs
+-	install -m 0644 include/*.h $(DESTDIR)/usr/include
+-	install -m 0644 include/cutils -d $(DESTDIR)/usr/include/cutils
 -
 -force:
 +	install -m 0755 -d $(PREFIX)/lib $(PREFIX)/include/cutils
@@ -196,12 +193,12 @@ diff -Nur a/amavutils/Makefile b/amavutils/Makefile
  
  clean:
 -	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)
-+	-rm -rfv *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)
- 
-     
+-
+-    
++	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)    
  
 diff -Nur a/amavutils/Makefile~ b/amavutils/Makefile~
---- a/amavutils/Makefile~	2015-01-07 16:59:40.000000000 -0500
+--- a/amavutils/Makefile~	2015-02-01 11:56:34.000000000 -0500
 +++ b/amavutils/Makefile~	1969-12-31 19:00:00.000000000 -0500
 @@ -1,44 +0,0 @@
 -M_PREFIX=$(AML_LIBS_STAGING_DIR)/usr
@@ -249,8 +246,8 @@ diff -Nur a/amavutils/Makefile~ b/amavutils/Makefile~
 -    
 -
 diff -Nur a/amcodec/clean.mk b/amcodec/clean.mk
---- a/amcodec/clean.mk	2015-01-07 16:59:40.000000000 -0500
-+++ b/amcodec/clean.mk	2015-01-12 15:34:23.479060496 -0500
+--- a/amcodec/clean.mk	2015-02-01 11:56:34.000000000 -0500
++++ b/amcodec/clean.mk	2015-02-01 12:57:38.096851363 -0500
 @@ -1,12 +1,10 @@
  clean:clean_all
  
@@ -266,18 +263,18 @@ diff -Nur a/amcodec/clean.mk b/amcodec/clean.mk
  
 -include $(SRCTREE)/rules.mk
 \ No newline at end of file
-+include $(SRC)/rules.mk
++include $(SRCTREE)/rules.mk
 diff -Nur a/amcodec/depends.mk b/amcodec/depends.mk
---- a/amcodec/depends.mk	2015-01-07 16:59:40.000000000 -0500
-+++ b/amcodec/depends.mk	2015-01-12 15:34:23.483060492 -0500
-@@ -1,13 +1,10 @@
+--- a/amcodec/depends.mk	2015-02-01 11:56:34.000000000 -0500
++++ b/amcodec/depends.mk	2015-02-01 12:58:16.528799279 -0500
+@@ -1,6 +1,4 @@
  all:depends.all
- 
 -
--	
+-
+ 	
  include Makefile
  
- %.o.depend:
+@@ -8,6 +6,5 @@
  	@$(CC) -M -I$(CFLAGS) $*.c >$*.o.d
  	@echo '	$$(call c_mk,$$<)'	>>$*.o.d
  
@@ -285,8 +282,8 @@ diff -Nur a/amcodec/depends.mk b/amcodec/depends.mk
  depends.all:$(filter %.o.depend,$(obj-y:%.o=%.o.depend)) 
  
 diff -Nur a/amcodec/dir.mk b/amcodec/dir.mk
---- a/amcodec/dir.mk	2015-01-07 16:59:40.000000000 -0500
-+++ b/amcodec/dir.mk	2015-01-12 15:34:23.483060492 -0500
+--- a/amcodec/dir.mk	2015-02-01 11:56:34.000000000 -0500
++++ b/amcodec/dir.mk	2015-02-01 13:07:26.260068456 -0500
 @@ -1,8 +1,7 @@
  all:build-in.o extern-in.o
  
@@ -299,8 +296,8 @@ diff -Nur a/amcodec/dir.mk b/amcodec/dir.mk
 \ No newline at end of file
 +include $(SRC)/rules.mk
 diff -Nur a/amcodec/Makefile b/amcodec/Makefile
---- a/amcodec/Makefile	2015-01-07 16:59:40.000000000 -0500
-+++ b/amcodec/Makefile	2015-01-12 15:47:11.466358693 -0500
+--- a/amcodec/Makefile	2015-02-01 11:56:34.000000000 -0500
++++ b/amcodec/Makefile	2015-02-01 12:56:23.380953095 -0500
 @@ -1,73 +1,36 @@
 -PREFIX=$(AML_LIBS_STAGING_DIR)/usr
 -
@@ -363,17 +360,17 @@ diff -Nur a/amcodec/Makefile b/amcodec/Makefile
 -	rm -rf $(target_all)
 -
 -install:
--	install  -m 0644 libamcodec.so /usr/lib/aml_libs
+-	install  -m 0644 libamcodec.so $(DESTDIR)/usr/lib/aml_libs
 -	
--	install -m 0644 include -d /usr/include/amcodec
--	install -m 0644 include/*.h /usr/include/amcodec
--	install -m 0644 include/*.h /usr/include
+-	install -m 0644 include -d $(DESTDIR)/usr/include/amcodec
+-	install -m 0644 include/*.h $(DESTDIR)/usr/include/amcodec
+-	install -m 0644 include/*.h $(DESTDIR)/usr/include
 -	
--	install -m 0644 include/amports -d /usr/include/amports
--	install -m 0644 include/amports/*.h /usr/include/amports
+-	install -m 0644 include/amports -d $(DESTDIR)/usr/include/amports
+-	install -m 0644 include/amports/*.h $(DESTDIR)/usr/include/amports
 -	
--	install -m 0644 include/ppmgr -d /usr/include/ppmgr
--	install -m 0644 include/ppmgr/*.h /usr/include/ppmgr
+-	install -m 0644 include/ppmgr -d $(DESTDIR)/usr/include/ppmgr
+-	install -m 0644 include/ppmgr/*.h $(DESTDIR)/usr/include/ppmgr
 -
 +PREFIX ?= /usr
 + 
@@ -412,9 +409,9 @@ diff -Nur a/amcodec/Makefile b/amcodec/Makefile
 +	install -m 0644 include/amports/*.h $(PREFIX)/include/amports	
 +	install -m 0644 include/ppmgr/*.h $(PREFIX)/include/ppmgr
 diff -Nur a/amcodec/rules.mk b/amcodec/rules.mk
---- a/amcodec/rules.mk	2015-01-07 16:59:40.000000000 -0500
-+++ b/amcodec/rules.mk	2015-01-12 15:34:23.483060492 -0500
-@@ -1,9 +1,6 @@
+--- a/amcodec/rules.mk	2015-02-01 11:56:34.000000000 -0500
++++ b/amcodec/rules.mk	2015-02-01 13:00:45.148599181 -0500
+@@ -1,38 +1,32 @@
 -##
 -
 -
@@ -426,7 +423,9 @@ diff -Nur a/amcodec/rules.mk b/amcodec/rules.mk
  
  c_mk=$(Q)echo "CC  $(1)";\
  		$(CC) $(CFLAGS)  $(EXT_CFLAGS) -c  $(1) 
-@@ -12,11 +9,9 @@
+ 
+ AFLAGS=-D__ASSEMBLY__ $(CFLAGS)
++
  s_mk=$(Q)echo "ASM $(1)";\
  		$(CC) $(AFLAGS) $(EXT_CFLAGS) -c $(1) 
  	
@@ -438,9 +437,11 @@ diff -Nur a/amcodec/rules.mk b/amcodec/rules.mk
  ld_mk=$(Q)echo "LD $(1) $(2)  $(3)";\
  		$(CC) $(LDFLAGS)  \
  		$(2:%-dir=%/build-in.o) \
-@@ -24,14 +19,12 @@
- 		-o $(1) 	
- 				
+ 		$(3:%-dir=%/build-in.o) \
+-		-o $(1) 	
+-				
++		-o $(1)
++
  clr_mk=$(Q)echo "CLEAN  $(1)";\
 -		$(MAKE) -C ${1} -f ${SRCTREE}/clean.mk
 +		$(MAKE) -C ${1} -f ${SRC}/clean.mk
@@ -450,11 +451,12 @@ diff -Nur a/amcodec/rules.mk b/amcodec/rules.mk
  
 -
  clean_mk=$(Q)rm -f $(1) $(2)
--
- 	
+ 
+-	
  %.o:%.S
  	$(call s_mk,$<)
-@@ -46,10 +39,6 @@
+ 
+@@ -46,10 +40,6 @@
  	$(call ar_mk,$@,$(obj-y:%/=%-dir))	
  	
  extern-in.o:$(extern-y)
@@ -466,24 +468,24 @@ diff -Nur a/amcodec/rules.mk b/amcodec/rules.mk
  ifdef QUITE_CMD
  Q=@
 diff -Nur a/aml.conf b/aml.conf
---- a/aml.conf	2015-01-07 16:59:40.000000000 -0500
+--- a/aml.conf	2015-02-01 11:56:34.000000000 -0500
 +++ b/aml.conf	1969-12-31 19:00:00.000000000 -0500
 @@ -1 +0,0 @@
 -/usr/lib/aml_libs
 diff -Nur a/description-pak b/description-pak
---- a/description-pak	2015-01-07 16:59:40.000000000 -0500
+--- a/description-pak	2015-02-01 11:56:34.000000000 -0500
 +++ b/description-pak	1969-12-31 19:00:00.000000000 -0500
 @@ -1 +0,0 @@
 -AMLogic VPU Libraries for ODROID-C1
 diff -Nur a/ld.so.conf b/ld.so.conf
---- a/ld.so.conf	2015-01-07 16:59:40.000000000 -0500
+--- a/ld.so.conf	2015-02-01 11:56:34.000000000 -0500
 +++ b/ld.so.conf	1969-12-31 19:00:00.000000000 -0500
 @@ -1 +0,0 @@
 -/usr/lib/aml_libs
 \ No newline at end of file
 diff -Nur a/Makefile b/Makefile
---- a/Makefile	2015-01-07 16:59:40.000000000 -0500
-+++ b/Makefile	2015-01-12 15:34:23.483060492 -0500
+--- a/Makefile	2015-02-01 11:56:34.000000000 -0500
++++ b/Makefile	2015-02-01 12:43:59.049995906 -0500
 @@ -1,15 +1,14 @@
 +PREFIX ?= /usr
 +
@@ -493,17 +495,17 @@ diff -Nur a/Makefile b/Makefile
  	make -C amcodec
  	
  install:
--	mkdir -p /usr/lib/aml_libs
+-	mkdir -p $(DESTDIR)/usr/lib/aml_libs
  	make -C amavutils install
  	make -C amadec install
  	make -C amcodec install
--	install -m 0666 ld.so.conf /usr/lib/aml_libs
--	install -m 0666 aml.conf /etc/ld.so.conf.d
+-	install -m 0666 ld.so.conf $(DESTDIR)/usr/lib/aml_libs
+-	install -m 0666 aml.conf $(DESTDIR)/etc/ld.so.conf.d
                  
  clean:
  	make -C amavutils clean
 diff -Nur a/postinstall-pak b/postinstall-pak
---- a/postinstall-pak	2015-01-07 16:59:40.000000000 -0500
+--- a/postinstall-pak	2015-02-01 11:56:34.000000000 -0500
 +++ b/postinstall-pak	1969-12-31 19:00:00.000000000 -0500
 @@ -1,2 +0,0 @@
 -#!/bin/sh

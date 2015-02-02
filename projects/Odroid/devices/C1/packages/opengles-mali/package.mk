@@ -17,31 +17,20 @@
 ################################################################################
 
 PKG_NAME="opengles-mali"
-PKG_VERSION="2.0+C1_fb"
+PKG_VERSION="1216b9e"
 PKG_REV="1"
 PKG_ARCH="arm"
 PKG_LICENSE="nonfree"
 PKG_SITE="http://openlinux.amlogic.com:8000/download/ARM/filesystem/"
-PKG_URL="http://deb.odroid.in/c1/pool/main/m/mali-fbdev/mali-fbdev_20150113-r4p0-1216b9e-13_armhf.deb"
+PKG_URL="$ODROID_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_DEPENDS_TARGET="toolchain libamcodec"
 PKG_PRIORITY="optional"
 PKG_SECTION="graphics"
 PKG_SHORTDESC="OpenGL ES pre-compiled libraries for Mali 400 GPUs found in Amlogic Meson6 SoCs"
 PKG_LONGDESC="OpenGL ES pre-compiled libraries for Mali 400 GPUs found in Amlogic Meson6 SoCs. The libraries could be found in a Linux buildroot released by Amlogic at http://openlinux.amlogic.com:8000/download/ARM/filesystem/. See the opengl package."
-PKG_SOURCE_DIR="$(basename ${PKG_URL/_armhf.deb})"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
-
-pre_unpack () {
-	( cd $SOURCES/$PKG_NAME/ && ar x $(basename $PKG_URL) data.tar.xz )
-	mv $SOURCES/$PKG_NAME/data.tar.xz $SOURCES/$PKG_NAME/${PKG_SOURCE_DIR}.tar.xz
-}
-unpack() {
-   mkdir $BUILD/${PKG_SOURCE_DIR}
-   tar xJf $SOURCES/$PKG_NAME/${PKG_SOURCE_DIR}.tar.xz -C $BUILD/$PKG_SOURCE_DIR
-
-}
 
 make_target() {
  : nothing
@@ -49,11 +38,11 @@ make_target() {
 
 makeinstall_target() {
   mkdir -p $SYSROOT_PREFIX/usr/lib
-    cp -PR usr/lib/arm-linux-gnueabihf/*.so* $SYSROOT_PREFIX/usr/lib
+    cp -PR fbdev/mali_libs/*.so* $SYSROOT_PREFIX/usr/lib
   mkdir -p $SYSROOT_PREFIX/usr/include
-    cp -PR usr/include/* $SYSROOT_PREFIX/usr/include
+    cp -PR fbdev/mali_headers/* $SYSROOT_PREFIX/usr/include
   mkdir -p $INSTALL/usr/lib
-    cp -PR usr/lib/arm-linux-gnueabihf/*.so* $INSTALL/usr/lib
+    cp -PR fbdev/mali_libs/*.so* $INSTALL/usr/lib
 }
 
 post_install() {

@@ -1,6 +1,6 @@
 ################################################################################
 #      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
+#      Copyright (C) 2014 Alex Deryskyba (alex@codesnake.com)
 #
 #  OpenELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,32 +16,28 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="libamcodec"
-PKG_VERSION="820b12a"
+PKG_NAME="amremote"
+PKG_VERSION="aa0a9e8"
 PKG_REV="1"
 PKG_ARCH="arm"
 PKG_LICENSE="other"
-PKG_SITE="http://openlinux.amlogic.com"
-PKG_URL="$ODROID_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain alsa-lib amremote"
+PKG_SITE="http://www.amlogic.com"
+PKG_URL="https://github.com/codesnake/amremote/releases/download/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
-PKG_SECTION="multimedia"
-PKG_SHORTDESC="libamcodec: Interface library for Amlogic media codecs"
-PKG_LONGDESC="libamcodec: Interface library for Amlogic media codecs"
+PKG_SECTION="sysutils/remote"
+PKG_SHORTDESC="amremote - IR remote configuration utility for Amlogic-based devices"
+PKG_LONGDESC="amremote - IR remote configuration utility for Amlogic-based devices"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-pre_maketarget() {
-  make PREFIX="$SYSROOT_PREFIX/usr" clean
-}
-
-make_target() {
-  make PREFIX="$SYSROOT_PREFIX/usr" all
-  make PREFIX="$SYSROOT_PREFIX/usr" install
-}
-
 makeinstall_target() {
-  make PREFIX="$INSTALL/usr" install
+  mkdir -p $INSTALL/usr/bin
+    cp remotecfg $INSTALL/usr/bin
 }
 
+post_install() {
+  enable_service amlogic-remotecfg.service
+}

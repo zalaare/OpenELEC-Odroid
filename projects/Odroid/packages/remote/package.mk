@@ -16,32 +16,30 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="libamcodec"
-PKG_VERSION="820b12a"
+PKG_NAME="remote"
+PKG_VERSION="1"
 PKG_REV="1"
-PKG_ARCH="arm"
-PKG_LICENSE="other"
-PKG_SITE="http://openlinux.amlogic.com"
-PKG_URL="$ODROID_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
-PKG_DEPENDS_TARGET="toolchain alsa-lib amremote"
+PKG_ARCH="any"
+PKG_LICENSE="GPL"
+PKG_SITE="http://www.openelec.tv"
+PKG_URL=""
+PKG_DEPENDS_TARGET="toolchain eventlircd v4l-utils"
 PKG_PRIORITY="optional"
-PKG_SECTION="multimedia"
-PKG_SHORTDESC="libamcodec: Interface library for Amlogic media codecs"
-PKG_LONGDESC="libamcodec: Interface library for Amlogic media codecs"
+PKG_SECTION="virtual"
+PKG_SHORTDESC="remote: Meta package for installing various tools needed for remote support"
+PKG_LONGDESC="Meta package for installing various tools needed for remote support"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-pre_maketarget() {
-  make PREFIX="$SYSROOT_PREFIX/usr" clean
-}
+if [ "$ATVCLIENT_SUPPORT" = "yes" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET atvclient"
+fi
 
-make_target() {
-  make PREFIX="$SYSROOT_PREFIX/usr" all
-  make PREFIX="$SYSROOT_PREFIX/usr" install
-}
+if [ "$IRSERVER_SUPPORT" = "yes" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET irserver"
+fi
 
-makeinstall_target() {
-  make PREFIX="$INSTALL/usr" install
-}
-
+if [ "$AMREMOTE_SUPPORT" = "yes" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET amremote"
+fi

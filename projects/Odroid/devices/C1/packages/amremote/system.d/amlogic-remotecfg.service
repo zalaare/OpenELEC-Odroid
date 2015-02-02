@@ -1,0 +1,11 @@
+[Unit]
+Description=Amlogic IR remote support
+ConditionPathExists=/dev/amremote
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '[ -f /storage/.config/amremote.conf ] && /usr/bin/remotecfg /storage/.config/amremote.conf || /usr/bin/remotecfg /etc/amremote.conf'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=basic.target

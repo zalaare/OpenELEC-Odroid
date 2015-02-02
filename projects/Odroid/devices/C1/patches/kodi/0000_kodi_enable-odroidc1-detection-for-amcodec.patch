@@ -1,0 +1,68 @@
+diff -Nur a/xbmc/utils/AMLUtils.cpp b/xbmc/utils/AMLUtils.cpp
+--- a/xbmc/utils/AMLUtils.cpp	2014-12-25 19:39:43.000000000 -0500
++++ b/xbmc/utils/AMLUtils.cpp	2015-02-01 14:13:23.374655585 -0500
+@@ -159,6 +159,22 @@
+   }
+ }
+ 
++bool aml_support_hevc()
++{
++  char valstr[1024];
++  if(aml_get_sysfs_str("/sys/class/amstream/vcodec_profile", valstr, 1024) != 0)
++  {
++    return false;
++  }
++  char* p = strstr(valstr, "hevc:");
++  if(p == NULL)
++  {
++    return false;
++  }
++
++  return true;
++}
++
+ enum AML_DEVICE_TYPE aml_get_device_type()
+ {
+   static enum AML_DEVICE_TYPE aml_device_type = AML_DEVICE_TYPE_UNINIT;
+@@ -173,8 +189,17 @@
+       aml_device_type = AML_DEVICE_TYPE_M3;
+     else if (cpu_hardware.find("Meson6") != std::string::npos)
+       aml_device_type = AML_DEVICE_TYPE_M6;
+-    else if (cpu_hardware.find("Meson8") != std::string::npos)
+-      aml_device_type = AML_DEVICE_TYPE_M8;
++    else if (cpu_hardware.find("Meson8") != std::string::npos
++          && cpu_hardware.find("Meson8B") == std::string::npos)
++    {
++      if (aml_support_hevc())
++        aml_device_type = AML_DEVICE_TYPE_M8M2;
++      else
++        aml_device_type = AML_DEVICE_TYPE_M8;
++    }
++    else if (cpu_hardware.find("Meson8B") != std::string::npos
++          || cpu_hardware.find("ODROID") != std::string::npos)
++      aml_device_type = AML_DEVICE_TYPE_M8B;
+     else
+       aml_device_type = AML_DEVICE_TYPE_UNKNOWN;
+   }
+diff -Nur a/xbmc/utils/AMLUtils.h b/xbmc/utils/AMLUtils.h
+--- a/xbmc/utils/AMLUtils.h	2014-12-25 19:39:43.000000000 -0500
++++ b/xbmc/utils/AMLUtils.h	2015-02-01 13:27:12.708570281 -0500
+@@ -28,7 +28,9 @@
+   AML_DEVICE_TYPE_M1,
+   AML_DEVICE_TYPE_M3,
+   AML_DEVICE_TYPE_M6,
+-  AML_DEVICE_TYPE_M8
++  AML_DEVICE_TYPE_M8,   // S802
++  AML_DEVICE_TYPE_M8B,  // S805
++  AML_DEVICE_TYPE_M8M2  // S812
+ };
+ 
+ enum AML_DISPLAY_AXIS_PARAM
+@@ -48,6 +50,7 @@
+ void aml_permissions();
+ bool aml_hw3d_present();
+ bool aml_wired_present();
++bool aml_support_hevc();
+ enum AML_DEVICE_TYPE aml_get_device_type();
+ void aml_cpufreq_min(bool limit);
+ void aml_cpufreq_max(bool limit);
