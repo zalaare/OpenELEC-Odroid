@@ -46,6 +46,8 @@ mkpkg-temp
 .nano_history
 .histfile
 .OpenELEC
+.viminfo
+.gem
 
 # git stuff
 .gitconfig

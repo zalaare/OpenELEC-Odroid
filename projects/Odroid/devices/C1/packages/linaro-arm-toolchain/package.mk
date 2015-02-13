@@ -17,18 +17,27 @@
 ################################################################################
 
 PKG_NAME="linaro-arm-toolchain"
-PKG_VERSION="4.8-2014.04"
+PKG_VERSION="4.9-2014"
 PKG_REV="1"
 PKG_ARCH="arm"
 PKG_LICENSE="other"
-PKG_SITE="http://linaro.org"
-PKG_URL="http://releases.linaro.org/14.04/components/toolchain/binaries/gcc-linaro-arm-none-eabi-${PKG_VERSION}_linux.tar.xz"
+PKG_SITE="http://releases.linaro.org"
+PKG_LINK="components/toolchain/binaries"
+case "`uname -m`" in
+  x86_64)
+    PKG_URL="$PKG_SITE/14.11/$PKG_LINK/arm-none-eabi/gcc-linaro-$PKG_VERSION.11-x86_64_arm-eabi.tar.xz"
+    PKG_SOURCE_DIR="gcc-linaro-$PKG_VERSION.11-x86_64_arm-eabi"
+    ;;
+  i?86)
+    PKG_URL="$PKG_SITE/14.09/$PKG_LINK/gcc-linaro-arm-none-eabi-$PKG_VERSION.09_linux.tar.xz"
+    PKG_SOURCE_DIR="gcc-linaro-arm-none-eabi-$PKG_VERSION.09_linux"
+    ;;
+esac
 PKG_HOST_DEPENDS_TARGET="toolchain"
 PKG_PRIORITY="optional"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="Linaro GCC Compiler for ARM"
 PKG_LONGDESC="Linaro GCC Compiler for ARM"
-PKG_SOURCE_DIR="gcc-linaro-arm-none-eabi-${PKG_VERSION}_linux"
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"

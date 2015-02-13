@@ -1,0 +1,39 @@
+#!/bin/bash
+
+TOP_DIR=/odroid
+
+# Get current addon version
+. $TOP_DIR/config/version
+
+ADDONS=(
+  "boblightd"
+  "hdhomerun"
+  "imon-mce"
+  "sundtek-mediatv"
+  "repository.unofficial.addon.pro"
+  "tvheadend"
+  "vdr-addon"
+)
+
+PROJECTS=( "Odroid" )
+DEVICES=( "U2" "XU3" "C1" )
+
+for addon in ${ADDONS[@]} ; do
+  for project in ${PROJECTS[@]} ; do
+    for device in ${DEVICES[@]} ; do
+      echo "PROJECT=${project} DEVICE=${device} $TOP_DIR/scripts/create_addon ${addon}"
+      cd $TOP_DIR && \
+      PROJECT=${project} DEVICE=${device} $TOP_DIR/scripts/create_addon ${addon}
+    done
+  done
+done
+
+for project in ${PROJECTS[@]} ; do
+  for device in ${DEVICES[@]} ; do
+    cd $TOP_DIR/target/addons/$ADDON_VERSION/${project}/${device} && \
+    $TOP_DIR/tools/mkaddons/genrepo
+ #   for dir in `find $TOP_DIR/target/addons/$ADDON_VERSION/${project}/${device} -maxdepth 1 -type d` ; do
+ #     cd ${dir} && [ -f addon.xml ] && rm addon.xml
+ #   done
+  done
+done

@@ -21,7 +21,7 @@
 ################################################################################
 
 TOPDIR=$(pwd)
-GIT_FLAGS="-q"
+GIT_FLAGS="${GIT_FLAGS:=-q}"
 
 usage() {
   echo "$0 XU3|U2|C1"
@@ -52,7 +52,11 @@ sources() {
 
   git pull $GIT_FLAGS
 
-  [ -n $2 ] && git reset $GIT_FLAGS --hard $2
+  if [ -n $2 ]; then
+    git reset $GIT_FLAGS --hard $2
+    git clean $GIT_FLAGS -fd
+  fi
+
   GIT_REV=`git log -n1 --format=%h`
   sed -i "s|^EXTRAVERSION[[:space:]]*=.*$|EXTRAVERSION = +$GIT_REV|" Makefile
   VERSION="$(grep \^VERSION Makefile | awk '{print $3}').$(grep \^PATCHLEVEL Makefile | awk '{print $3}').$(grep \^SUBLEVEL Makefile | awk '{print $3}')+$GIT_REV"
@@ -89,6 +93,6 @@ package() {
 if [ -z $1 ]; then
   usage
 else
-  sources $1
+  sources $1 $2
   package $1
 fi

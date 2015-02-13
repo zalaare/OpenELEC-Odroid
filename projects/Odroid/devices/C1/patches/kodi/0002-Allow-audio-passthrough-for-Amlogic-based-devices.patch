@@ -1,10 +1,10 @@
-From 614bc1be8201949036c37b29fd124c0be0f866c6 Mon Sep 17 00:00:00 2001
+From 7cdd0f41588b9ddf4778f643fc77cbcbf7ca54a5 Mon Sep 17 00:00:00 2001
 From: Alex Deryskyba <alex@codesnake.com>
 Date: Wed, 16 Apr 2014 22:11:51 +0300
 Subject: [PATCH 02/16] Allow audio passthrough for Amlogic-based devices.
 
 ---
- .../AudioEngine/Engines/ActiveAE/ActiveAESink.cpp  |    8 ++++++++
+ xbmc/cores/AudioEngine/Engines/ActiveAE/ActiveAESink.cpp |    8 ++++++++
  1 file changed, 8 insertions(+)
 
 diff --git a/xbmc/cores/AudioEngine/Engines/ActiveAE/ActiveAESink.cpp b/xbmc/cores/AudioEngine/Engines/ActiveAE/ActiveAESink.cpp
@@ -45,5 +45,5 @@ index b391ff3..a7565f0 100644
  
  enum SINK_STATES
 -- 
-1.7.9.5
+1.7.10.4
 

@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+require 'zip'
+require 'digest'
+
+addons_file_content = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<addons>\n"
+
+Dir['*/'].each do |subdir|
+  Dir["#{subdir}*.zip"].each do |package_name|
+    Zip::File.open(package_name) do |zip_file|
+      addon_xml_entry = zip_file.glob('*/addon.xml').first
+      unless addon_xml_entry.nil?
+        puts("Processing #{package_name}...")
+        addon_xml_entry.get_input_stream.read.each_line do |line|
+          addons_file_content << line unless line.start_with?('<?xml')
+        end
+      end
+    end
+  end
+end
+
+addons_file_content << "</addons>\n"
+
+File.open('addons.xml', 'w') do |f|
+  f.write(addons_file_content)
+
+  digest= Digest::MD5.hexdigest(addons_file_content)
+  File.open('addons.xml.md5', 'w') {|f| f.write(digest)}
+end

@@ -31,7 +31,7 @@ if [ -z $INSTALL ]; then
 else
   UBOOT_DIR=$INSTALL/usr/share/bootloader
 fi
-UBOOT_FLAGS="conv=notrunc" # status=none"
+UBOOT_FLAGS="conv=notrunc status=none"
 
 case $1 in
   U2|u2|U3|u3|xu3|XU3)

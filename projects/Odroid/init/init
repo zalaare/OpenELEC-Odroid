@@ -110,10 +110,10 @@
         wol_wait="${arg#*=}"
         ;;
       textmode)
-        INIT_ARGS="$INIT_ARGS --unit=textmode.target"
+        INIT_UNIT="--unit=textmode.target"
         ;;
       installer)
-        INIT_ARGS="$INIT_ARGS --unit=installer.target"
+        INIT_UNIT="--unit=installer.target"
         ;;
       debugging)
         DEBUG=yes
@@ -488,11 +488,6 @@
   check_update() {
     progress "Checking for updates"
 
-    # check for ATV1 mach-o-kernel
-    if [ -f "/flash/com.apple.Boot.plist" -a -f "/flash/boot.efi" ]; then
-      UPDATE_KERNEL="MACH_KERNEL"
-    fi
-
     UPDATE_TAR=`ls -1 "$UPDATE_DIR"/*.tar 2>/dev/null | head -n 1`
     if [ -f "$UPDATE_DIR/$UPDATE_KERNEL" -a -f "$UPDATE_DIR/$UPDATE_SYSTEM" -a -f "$UPDATE_DIR/$UPDATE_INITRD" -o -f "$UPDATE_TAR" ] ; then
       if [ "$UPDATE_DISABLED" = "yes" ] ; then
@@ -649,20 +644,25 @@
 
   BOOT_STEP=final
 
-  # log if booting from usb / removable storage
+  # no suspend when booted from nonpersistent storage
   STORAGE=$(cat /proc/mounts | grep " /sysroot/storage " | awk '{print $1}' | awk -F '/' '{print $3}')
-  FLASH=$(cat /proc/mounts | grep " /sysroot/flash " | awk '{print $1}' | awk -F '/' '{print $3}')
-  for i in $STORAGE $FLASH ; do
-    if [ -n "$i" ] ; then
-      removable="/sys/class/block/*/$i/../removable"
-      if [ -e $removable ] ; then
-        if [ "$(cat $removable 2>/dev/null)" = "1" ] ; then
-          echo "### BIG FAT WARNING" > /dev/kmsg
-          echo "### $i is removable. suspend/resume may not work" > /dev/kmsg
-        fi
+  if [ -n "$STORAGE" ] ; then
+    removable="/sys/class/block/*/$STORAGE/../removable"
+    if [ -e $removable ] ; then
+      if [ "$(cat $removable 2>/dev/null)" = "1" ] ; then
+        SUSPEND_DISABLED=yes
       fi
     fi
-  done
+  fi
+  FLASH=$(cat /proc/mounts | grep " /sysroot/flash " | awk '{print $1}' | awk -F '/' '{print $3}')
+  if [ -n "$FLASH" ] ; then
+    removable="/sys/class/block/*/$FLASH/../removable"
+    if [ -e $removable ] ; then
+      if [ "$(cat $removable 2>/dev/null)" = "1" ] ; then
+        SUSPEND_DISABLED=yes
+      fi
+    fi
+  fi
   # move some special filesystems
   /bin/busybox mount --move /dev /sysroot/dev
   /bin/busybox mount --move /proc /sysroot/proc
@@ -676,7 +676,25 @@
   if [ "$STORAGE_NETBOOT" = "yes" ] ; then
     echo "" > /sysroot/dev/.storage_netboot
   fi
+  # no suspend when booted from nonpersistent storage
+  if [ "$SUSPEND_DISABLED" = "yes" ] ; then
+    echo "" > /sysroot/dev/.suspend_disabled
+  fi
+
+  if [ -f /sysroot/storage/.please_resize_me ] ; then
+    INIT_UNIT="--unit=fs-resize.target"
+  fi
+
+  if [ -f /sysroot/storage/.cache/reset_oe -o -f /sysroot/storage/.cache/reset_xbmc ] ; then
+    INIT_UNIT="--unit=factory-reset.target"
+  fi
+
+  BACKUP_FILE=`ls -1 /sysroot/storage/.restore/??????????????.tar 2>/dev/null | head -n 1`
+  if [ -f "$BACKUP_FILE" ] ; then
+    INIT_UNIT="--unit=backup-restore.target"
+  fi
+
   # switch to new sysroot and start real init
-  exec /bin/busybox switch_root /sysroot /usr/lib/systemd/systemd $INIT_ARGS
+  exec /bin/busybox switch_root /sysroot /usr/lib/systemd/systemd $INIT_ARGS $INIT_UNIT
 
   error "switch_root" "Error in initramfs. Could not switch to new root"

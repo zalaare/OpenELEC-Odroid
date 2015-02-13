@@ -1,0 +1,11 @@
+diff -Nur a/system/keymaps/keyboard.xml b/system/keymaps/keyboard.xml
+--- a/system/keymaps/keyboard.xml	2015-01-29 18:47:24.000000000 +0000
++++ b/system/keymaps/keyboard.xml	2015-02-09 15:50:25.880189050 +0000
+@@ -59,6 +59,7 @@
+       <s>ActivateWindow(shutdownmenu)</s>
+       <escape>PreviousMenu</escape>
+       <i>Info</i>
++      <key id='61654'>ContextMenu</key>
+       <menu>ContextMenu</menu>
+       <c>ContextMenu</c>
+       <space>Pause</space>
