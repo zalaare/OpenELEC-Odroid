@@ -17,13 +17,13 @@
 ################################################################################
 
 PKG_NAME="Pillow"
-PKG_VERSION="3.0.0"
+PKG_VERSION="3.1.0"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="BSD"
 PKG_SITE="http://www.pythonware.com/products/pil/"
 PKG_URL="https://pypi.python.org/packages/source/P/Pillow/$PKG_NAME-$PKG_VERSION.tar.gz"
-PKG_DEPENDS_TARGET="toolchain Python distutilscross:host zlib freetype libjpeg-turbo"
+PKG_DEPENDS_TARGET="toolchain Python distutilscross:host zlib freetype libjpeg-turbo tiff"
 PKG_PRIORITY="optional"
 PKG_SECTION="python"
 PKG_SHORTDESC="pil: Imaging handling/processing for Python"
