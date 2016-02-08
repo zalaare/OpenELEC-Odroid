@@ -21,6 +21,7 @@ case $DEVICE in
   U2)  PKG_VERSION="3.8.13+ddfddf8" ;;
   XU3) PKG_VERSION="3.10.82+30cd824" ;;
   C1)  PKG_VERSION="3.10.80+c5a1115" ;;
+  C2)  PKG_VERSION="3.14.29+1505a70" ; TARGET_ARCH=arm64 ;;
 esac
 PKG_URL="$ODROID_MIRROR/$PKG_NAME-$PKG_VERSION.tar.xz"
 PKG_REV="1"
@@ -51,6 +52,10 @@ else
   KERNEL_IMAGE="bzImage"
 fi
 
+if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mkbootimg:host"
+fi
+
 post_patch() {
  
   sed -i -e "s|^HOSTCC[[:space:]]*=.*$|HOSTCC = $HOST_CC|" \
@@ -59,7 +64,7 @@ post_patch() {
          -e "s|^CROSS_COMPILE[[:space:]]*?=.*$|CROSS_COMPILE = $TARGET_PREFIX|" \
          $PKG_BUILD/Makefile
 
-  cp $PKG_BUILD/arch/arm/configs/$KERNEL_CFG_FILE $PKG_BUILD/.config
+  cp $PKG_BUILD/arch/$TARGET_ARCH/configs/$KERNEL_CFG_FILE $PKG_BUILD/.config
 
   # allow setting global linux config options and device specific
   if [ -f $PROJECT_DIR/$PROJECT/linux/linux.conf ]; then
@@ -138,12 +143,16 @@ make_target() {
     done
   fi
 
-  LDFLAGS="" make $KERNEL_IMAGE $KERNEL_MAKE_EXTRACMD
+  if [ "$DEVICE" = "C2" ]; then
+    LDFLAGS="" make
+  else
+    LDFLAGS="" make $KERNEL_IMAGE $KERNEL_MAKE_EXTRACMD
+  fi
 
   if [ "$BUILD_ANDROID_BOOTIMG" = "yes" ]; then
-    LDFLAGS="" mkbootimg --kernel arch/arm/boot/$KERNEL_IMAGE --ramdisk $ROOT/$BUILD/image/initramfs.cpio \
-      --second "$ANDROID_BOOTIMG_SECOND" --output arch/arm/boot/boot.img
-    mv -f arch/arm/boot/boot.img arch/arm/boot/$KERNEL_IMAGE
+    LDFLAGS="" mkbootimg --kernel arch/$TARGET_ARCH/boot/$KERNEL_IMAGE --ramdisk $ROOT/$BUILD/image/initramfs.cpio \
+      --second "$ANDROID_BOOTIMG_SECOND" --output arch/$TARGET_ARCH/boot/boot.img
+    mv -f arch/$TARGET_ARCH/boot/boot.img arch/$TARGET_ARCH/boot/$KERNEL_IMAGE
   fi
 
   if [ "$PERF_SUPPORT" = "yes" -a "$DEVTOOLS" = "yes" ]; then
@@ -175,9 +184,9 @@ make_target() {
 }
 
 makeinstall_target() {
-  if [ "$BOOTLOADER" = "u-boot" -a -f "$(ls arch/arm/boot/dts/*.dtb 2>/dev/null)" ]; then
+  if [ "$BOOTLOADER" = "u-boot" -a -f "$(ls arch/$TARGET_ARCH/boot/dts/*.dtb 2>/dev/null)" ]; then
     mkdir -p $INSTALL/usr/share/bootloader
-      cp arch/arm/boot/dts/*.dtb $INSTALL/usr/share/bootloader
+      cp arch/$TARGET_ARCH/boot/dts/*.dtb $INSTALL/usr/share/bootloader
   fi
 
   if [ "$PERF_SUPPORT" = "yes" -a "$DEVTOOLS" = "yes" ]; then

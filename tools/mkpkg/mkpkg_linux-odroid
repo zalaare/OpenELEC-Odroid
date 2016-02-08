@@ -22,9 +22,19 @@
 
 TOPDIR=$(pwd)
 GIT_FLAGS="${GIT_FLAGS:=-q}"
+GIT_DIR="linux-odroid"
+
+case $1 in
+  XU3|xu3|XU4|xu4) GIT_BRANCH="odroidxu3-3.10.y" ;;
+  U2|U3|u2|u3)     GIT_BRANCH="odroid-3.8.y" ;;
+  c1|C1)           GIT_BRANCH="odroidc-3.10.y" ;;
+  c2|C2)           GIT_BRANCH="odroidc2-3.14.y" ;;
+  *)               usage ;;
+esac
+
 
 usage() {
-  echo "$0 XU3|U2|C1"
+  echo "$0 XU3|U2|C1|C2"
   echo "  ex. $0 XU3"
   exit 1
 }
@@ -34,21 +44,16 @@ sources() {
 
   cd $TOPDIR
 
-  if [ ! -d linux-odroid ]; then
-    git clone $GIT_FLAGS git://github.com/hardkernel/linux.git linux-odroid
+  if [ ! -d $GIT_DIR ]; then
+    git clone $GIT_FLAGS git://github.com/hardkernel/linux.git $GIT_DIR
   fi
 
-  cd $TOPDIR/linux-odroid
+  cd $TOPDIR/$GIT_DIR
 
   git reset $GIT_FLAGS --hard
   git clean $GIT_FLAGS -fd
 
-  case $1 in
-    XU3|xu3) git checkout $GIT_FLAGS -m odroidxu3-3.10.y ;;
-    U2|U3|u2|u3) git checkout $GIT_FLAGS -m odroid-3.8.y ;;
-    c1|C1) git checkout $GIT_FLAGS -m odroidc-3.10.y ;;
-    *) usage ;;
-  esac
+  git checkout $GIT_FLAGS -m $GIT_BRANCH
 
   git pull $GIT_FLAGS
 
@@ -74,7 +79,7 @@ package() {
   fi
 
   echo -n "Copying GIT to Release ... "
-  cp -RP linux-odroid linux-$VERSION
+  cp -RP $GIT_DIR linux-$VERSION
   echo "DONE"
 
   echo -n "Cleaning Source ... "
