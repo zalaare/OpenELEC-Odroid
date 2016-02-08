@@ -19,7 +19,7 @@
 PKG_NAME="lzop"
 PKG_VERSION="1.03"
 PKG_REV="1"
-PKG_ARCH="arm"
+PKG_ARCH="any"
 PKG_LICENSE="other"
 PKG_SITE="http://www.lzop.org"
 PKG_URL="http://www.lzop.org/download/$PKG_NAME-$PKG_VERSION.tar.gz"
