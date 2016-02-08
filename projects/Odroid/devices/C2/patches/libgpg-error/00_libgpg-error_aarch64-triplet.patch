@@ -1,0 +1,13 @@
+Binary files a/src/core and b/src/core differ
+diff -Nur a/src/mkheader.c b/src/mkheader.c
+--- a/src/mkheader.c	2015-09-17 07:06:20.000000000 +0000
++++ b/src/mkheader.c	2016-02-05 15:52:51.827903494 +0000
+@@ -325,7 +326,7 @@
+   int repl_flag;
+ 
+   repl_flag = !!strchr (name, '&');
+-  incfname = mk_include_name (name, repl_flag? host_triplet : NULL);
++  incfname = mk_include_name (name, "aarch64-unknown-linux-gnu");
+   fp = fopen (incfname, "r");
+   if (!fp && repl_flag)
+     {
