@@ -30,20 +30,25 @@ PKG_SHORTDESC="linux-api-headers: Linux kernel headers sanitized for development
 PKG_LONGDESC="linux-api-headers: Linux kernel headers sanitized for development use"
 PKG_SOURCE_DIR="linux-$PKG_VERSION"
 
+case $DEVICE in
+  C2)  ARCH=arm64 ;;
+   *)  ARCH=$TARGET_ARCH ;;
+esac
+
 unpack() { 
   $SCRIPTS/extract $PKG_NAME $(basename $PKG_URL) $BUILD
 }
 
 pre_make_host() {
-  make ARCH=$TARGET_ARCH mrproper
+  make ARCH=$ARCH mrproper
 }
 
 make_host() {
-  make ARCH=$TARGET_ARCH headers_check
+  make ARCH=$ARCH headers_check
 }
 
 makeinstall_host() { 
-  make ARCH=$TARGET_ARCH INSTALL_HDR_PATH=dest headers_install
+  make ARCH=$ARCH INSTALL_HDR_PATH=dest headers_install
 }
 
 post_makeinstall_host() {
