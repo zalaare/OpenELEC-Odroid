@@ -1,0 +1,512 @@
+diff -Nur a/amadec/Makefile b/amadec/Makefile
+--- a/amadec/Makefile	2015-02-01 11:56:34.000000000 -0500
++++ b/amadec/Makefile	2015-02-01 12:54:13.205131366 -0500
+@@ -1,46 +1,49 @@
+-M_PREFIX=$(AML_LIBS_STAGING_DIR)/usr
++PREFIX ?= /usr
+ 
+-LIB_DIR?=$(M_PREFIX)/lib
+-HEADERS_DIR?=$(M_PREFIX)/include
++TARGET_OBJS=adec-external-ctrl.o \
++  adec-internal-mgt.o \
++  adec-ffmpeg-mgt.o \
++  adec-message.o \
++  adec-pts-mgt.o \
++  feeder.o \
++  adec_write.o \
++  adec_read.o \
++  dsp/audiodsp-ctl.o \
++  audio_out/alsa-out.o \
++  audio_out/aml_resample.o \
++  audiodsp_update_format.o \
++  spdif_api.o \
++  pcmenc_api.o \
++  dts_transenc_api.o \
++  dts_enc.o \
++  audio_out/alsactl_parser.o
+ 
+-TARGET_OBJS=adec-external-ctrl.o adec-internal-mgt.o adec-ffmpeg-mgt.o adec-message.o adec-pts-mgt.o feeder.o adec_write.o adec_read.o\
+-           dsp/audiodsp-ctl.o audio_out/alsa-out.o audio_out/aml_resample.o audiodsp_update_format.o spdif_api.o pcmenc_api.o dts_transenc_api.o dts_enc.o audio_out/alsactl_parser.o 
+-TARGET=libamadec.so
++TARGET = libamadec.so
+ 
+-INSTALL_DIR=$(LIB_DIR)/aml_libs
++TOPDIR = $(shell pwd)
++SRC ?= $(TOPDIR)
+ 
+ LDFLAGS += -shared -lpthread -lm -lasound -lrt
+-
+-TOPDIR=$(shell pwd)
+-SRC?=$(TOPDIR)
+-
+-CFLAGS+=-O2 -mlong-calls -fPIC -g
+-CFLAGS+=-I$(SRC) -I$(SRC)/include -I$(SRC)/../amavutils/include -I$(SRC)/../amplayer/player/include -I${HEADERS_DIR} -L${LIB_DIR}
+-CFLAGS+=-DALSA_OUT
++CFLAGS += -O2 -mlong-calls -fPIC -g
++CFLAGS += -I$(SRC) -I$(SRC)/include -I$(SRC)/../amavutils/include -I$(SRC)/../amplayer/player/include -I$(PREFIX)/include -L$(PREFIX)/lib
++CFLAGS += -DALSA_OUT
+ 
+ ifdef DOLBY_UDC
+-    CFLAGS+=-DDOLBY_USE_ARMDEC
++  CFLAGS += -DDOLBY_USE_ARMDEC
+ endif
+ 
+-export CC CFLAGS
++export CC LDFLAGS CFLAGS
+ 
+-all: $(TARGET) 
++all: $(TARGET)
+ 
+ $(TARGET): $(TARGET_OBJS)
+-	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_OBJS:%.o=%.c) -o $@  
+-
+-    
+-    
++	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_OBJS:%.o=%.c) -o $@
+ 
+ install:
+-	install -m 0644 libamadec.so $(DESTDIR)/usr/lib/aml_libs
+-	install -m 0644 include/*.h $(DESTDIR)/usr/include
+-	install -m 0644 *.h $(DESTDIR)/usr/include
+-
+-force:
++	install -m 0755 -d $(PREFIX)/lib $(PREFIX)/include
++	install -m 0755 $(TARGET) $(PREFIX)/lib
++	install -m 0644 include/*.h $(PREFIX)/include
++	install -m 0644 *.h $(PREFIX)/include
+ 
+ clean:
+ 	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)
+-
+-    
+-
+diff -Nur a/amadec/Makefile~ b/amadec/Makefile~
+--- a/amadec/Makefile~	2015-02-01 11:56:34.000000000 -0500
++++ b/amadec/Makefile~	1969-12-31 19:00:00.000000000 -0500
+@@ -1,46 +0,0 @@
+-M_PREFIX=$(AML_LIBS_STAGING_DIR)/usr
+-
+-LIB_DIR?=$(M_PREFIX)/lib
+-HEADERS_DIR?=$(M_PREFIX)/include
+-
+-TARGET_OBJS=adec-external-ctrl.o adec-internal-mgt.o adec-ffmpeg-mgt.o adec-message.o adec-pts-mgt.o feeder.o adec_write.o adec_read.o\
+-           dsp/audiodsp-ctl.o audio_out/alsa-out.o audio_out/aml_resample.o audiodsp_update_format.o spdif_api.o pcmenc_api.o dts_transenc_api.o dts_enc.o audio_out/alsactl_parser.o 
+-TARGET=libamadec.so
+-
+-INSTALL_DIR=$(LIB_DIR)/aml_libs
+-
+-LDFLAGS += -shared -lpthread -lm -lasound -lrt
+-
+-TOPDIR=$(shell pwd)
+-SRC?=$(TOPDIR)
+-
+-CFLAGS+=-O2 -mlong-calls -fPIC -g
+-CFLAGS+=-I$(SRC) -I$(SRC)/include -I$(SRC)/../amavutils/include -I$(SRC)/../amplayer/player/include -I${HEADERS_DIR} -L${LIB_DIR}
+-CFLAGS+=-DALSA_OUT
+-
+-ifdef DOLBY_UDC
+-    CFLAGS+=-DDOLBY_USE_ARMDEC
+-endif
+-
+-export CC CFLAGS
+-
+-all: $(TARGET) 
+-
+-$(TARGET): $(TARGET_OBJS)
+-	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_OBJS:%.o=%.c) -o $@  
+-
+-    
+-    
+-
+-install:
+-	-install -m 555 ${TARGET} $(INSTALL_DIR)
+-	cp  -rf include/*  $(HEADERS_DIR)/
+-	cp  -rf *.h  $(HEADERS_DIR)/
+-
+-force:
+-
+-clean:
+-	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)
+-
+-    
+-
+diff -Nur a/amavutils/Makefile b/amavutils/Makefile
+--- a/amavutils/Makefile	2015-02-01 11:56:34.000000000 -0500
++++ b/amavutils/Makefile	2015-02-01 12:49:25.553531391 -0500
+@@ -1,44 +1,35 @@
+-M_PREFIX=$(AML_LIBS_STAGING_DIR)/usr
+-LIB_DIR?=$(M_PREFIX)/lib
+-HEADERS_DIR?=$(M_PREFIX)/include
++PREFIX ?= /usr
+ 
+-TARGET_OBJS=amaudioutils.o amconfigutils.o amdisplayutils.o ammodule.o amsysfsutils.o Amvideoutils.o itemlist.o\
++TARGET_OBJS=amaudioutils.o \
++  amconfigutils.o \
++  amdisplayutils.o \
++  ammodule.o \
++  amsysfsutils.o \
++  Amvideoutils.o \
++  itemlist.o
+ 
+-TARGET=libamavutils.so
++TARGET = libamavutils.so
+ 
+-INSTALL_DIR=${LIB_DIR}/aml_libs
++TOPDIR = $(shell pwd)
++SRC    = $(TOPDIR)
+ 
+ LDFLAGS += -shared -lpthread -lm -lrt
++CFLAGS  += -O2 -mlong-calls -fPIC -g
++CFLAGS  += -I$(SRC) -I$(SRC)/include -I$(SRC)/../amcodec/include -L$(PREFIX)/lib -I$(PREFIX)/include
+ 
+-TOPDIR=$(shell pwd)
+-SRC?=$(TOPDIR)
+-
+-CFLAGS+=-O2 -mlong-calls -fPIC -g
+-CFLAGS+=-I$(SRC) -I$(SRC)/include -I$(SRC)/../amcodec/include -L${LIB_DIR} -I$(HEADERS_DIR)
+-
+-
+-
+-
+-
+-export CC CFLAGS
++export CC LDFLAGS CFLAGS
+ 
+ all: $(TARGET) 
+ 
+ $(TARGET): $(TARGET_OBJS)
+ 	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_OBJS:%.o=%.c) -o $@  
+ 
+-    
+-    
+-
+ install:
+-	install -m 0644 ${TARGET} $(DESTDIR)/usr/lib/aml_libs
+-	install -m 0644 include/*.h $(DESTDIR)/usr/include
+-	install -m 0644 include/cutils -d $(DESTDIR)/usr/include/cutils
+-
+-force:
++	install -m 0755 -d $(PREFIX)/lib $(PREFIX)/include/cutils
++	install -m 0755 $(TARGET) $(PREFIX)/lib
++	install -m 0644 include/*.h $(PREFIX)/include
++	install -m 0644 include/cutils/*.h $(PREFIX)/include/cutils
+ 
+ clean:
+-	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)
+-
+-    
++	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)    
+ 
+diff -Nur a/amavutils/Makefile~ b/amavutils/Makefile~
+--- a/amavutils/Makefile~	2015-02-01 11:56:34.000000000 -0500
++++ b/amavutils/Makefile~	1969-12-31 19:00:00.000000000 -0500
+@@ -1,44 +0,0 @@
+-M_PREFIX=$(AML_LIBS_STAGING_DIR)/usr
+-LIB_DIR?=$(M_PREFIX)/lib
+-HEADERS_DIR?=$(M_PREFIX)/include
+-
+-TARGET_OBJS=amaudioutils.o amconfigutils.o amdisplayutils.o ammodule.o amsysfsutils.o Amvideoutils.o itemlist.o\
+-
+-TARGET=libamavutils.so
+-
+-INSTALL_DIR=${LIB_DIR}/aml_libs
+-
+-LDFLAGS += -shared -lpthread -lm -lrt
+-
+-TOPDIR=$(shell pwd)
+-SRC?=$(TOPDIR)
+-
+-CFLAGS+=-O2 -mlong-calls -fPIC -g
+-CFLAGS+=-I$(SRC) -I$(SRC)/include -I$(SRC)/../amcodec/include -L${LIB_DIR} -I$(HEADERS_DIR)
+-
+-
+-
+-
+-
+-export CC CFLAGS
+-
+-all: $(TARGET) 
+-
+-$(TARGET): $(TARGET_OBJS)
+-	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_OBJS:%.o=%.c) -o $@  
+-
+-    
+-    
+-
+-install:
+-	install -m 0644 ${TARGET} /usr/lib/aml_libs
+-	install -m 0644 include/* /usr/include
+-	install -m 0644 include/cutils/* /usr/include/cutils
+-
+-force:
+-
+-clean:
+-	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)
+-
+-    
+-
+diff -Nur a/amcodec/clean.mk b/amcodec/clean.mk
+--- a/amcodec/clean.mk	2015-02-01 11:56:34.000000000 -0500
++++ b/amcodec/clean.mk	2015-02-01 12:57:38.096851363 -0500
+@@ -1,12 +1,10 @@
+ clean:clean_all
+ 
+-
+-
+ include Makefile
++
+ clean_all:$(filter %-clrdir,$(obj-y:%/=%-clrdir))
+ 	$(call clean_mk,*.o)
+ 	$(call clean_mk,*.o.d)
+ 	$(call clean_mk, build-in.o)
+-   
+ 
+-include $(SRCTREE)/rules.mk
+\ No newline at end of file
++include $(SRCTREE)/rules.mk
+diff -Nur a/amcodec/depends.mk b/amcodec/depends.mk
+--- a/amcodec/depends.mk	2015-02-01 11:56:34.000000000 -0500
++++ b/amcodec/depends.mk	2015-02-01 12:58:16.528799279 -0500
+@@ -1,6 +1,4 @@
+ all:depends.all
+-
+-
+ 	
+ include Makefile
+ 
+@@ -8,6 +6,5 @@
+ 	@$(CC) -M -I$(CFLAGS) $*.c >$*.o.d
+ 	@echo '	$$(call c_mk,$$<)'	>>$*.o.d
+ 
+-
+ depends.all:$(filter %.o.depend,$(obj-y:%.o=%.o.depend)) 
+ 
+diff -Nur a/amcodec/dir.mk b/amcodec/dir.mk
+--- a/amcodec/dir.mk	2015-02-01 11:56:34.000000000 -0500
++++ b/amcodec/dir.mk	2015-02-01 13:07:26.260068456 -0500
+@@ -1,8 +1,7 @@
+ all:build-in.o extern-in.o
+ 
+-
+ include Makefile
+ 
+ include $(filter %.o.d,$(obj-y:%.o=%.o.d))
+ 
+-include $(SRCTREE)/rules.mk
+\ No newline at end of file
++include $(SRC)/rules.mk
+diff -Nur a/amcodec/Makefile b/amcodec/Makefile
+--- a/amcodec/Makefile	2015-02-01 11:56:34.000000000 -0500
++++ b/amcodec/Makefile	2015-02-01 12:56:23.380953095 -0500
+@@ -1,73 +1,36 @@
+-PREFIX=$(AML_LIBS_STAGING_DIR)/usr
+-
+-LIB_DIR?=$(PREFIX)/lib
+-HEADERS_DIR?=$(PREFIX)/include
+-CROSS=$(CC:%gcc=%)
+-QUITE_CMD=1
+-
+-INSTALL_FLAGS=-m 755
+-
+-CPP=g++
+-AS=as
+-AR=ar
+-LD=ld
+-NM=nm
+-STRIP=strip
+-OBJCOPY=objcopy
+-export CC CPP AS AR LD NM STRIP OBJCOPY
+-
+-TOPDIR=$(shell pwd)
+-SRC?=$(TOPDIR)
+-SRCTREE=$(SRC)
+-BUILDTREE=$(SRC)/out
+-
+-INSTALL_DIR=${LIB_DIR}/aml_libs
+-
+-TARGET?=libamcodec.so
+-
+-DIRS=audio_ctl/ codec/
+-
+-LDFLAGS=  -O2  -L$(LIB_DIR)  -lm -lc  -shared -Wl,--shared -Wl,-soname,$(TARGET)$(LIB_VERSION)
+-
+-#INCLUDE=$(DIRS:%/=-I$(SRC)/%/include)
+-INCLUDE=${SRCTREE}/include/ 
+-#CFLAGS=-O0  -gdwarf-2  -g
+-CFLAGS=-O2 -g  -I$(SRC)/include  -I${SRCTREE}/audio_ctl -I${SRCTREE}/codec -I${SRCTREE}/../amadec/include -fPIC
+-
+-
+-
+-
+-target_all=  $(TARGET)
+-all:$(target_all)
+-
+-dirs=$(DIRS)
+-
+-DIROBJ=$(dirs:%/=%-dir)
+-
+-
+-$(target_all):$(DIROBJ)
+-	$(call ld_mk,$(OUT_DIR)$@,$^)
+-
+-
+-
+-
+-include $(SRCTREE)/rules.mk
+-export CC CPP AS AR LD TOPDIR SRCTREE  CFLAGS LDFLAGS Q
+-
+-CLRDIR=$(dirs:%/=%-clrdir)
+-clean:$(CLRDIR)
+-	rm -rf $(target_all)
+-
+-install:
+-	install  -m 0644 libamcodec.so $(DESTDIR)/usr/lib/aml_libs
+-	
+-	install -m 0644 include -d $(DESTDIR)/usr/include/amcodec
+-	install -m 0644 include/*.h $(DESTDIR)/usr/include/amcodec
+-	install -m 0644 include/*.h $(DESTDIR)/usr/include
+-	
+-	install -m 0644 include/amports -d $(DESTDIR)/usr/include/amports
+-	install -m 0644 include/amports/*.h $(DESTDIR)/usr/include/amports
+-	
+-	install -m 0644 include/ppmgr -d $(DESTDIR)/usr/include/ppmgr
+-	install -m 0644 include/ppmgr/*.h $(DESTDIR)/usr/include/ppmgr
+-
++PREFIX ?= /usr
++ 
++TARGET = libamcodec.so
++ 
++TOPDIR = $(shell pwd)
++SRC ?= $(TOPDIR)
++SRCTREE = $(SRC)
++ 
++DIRS = audio_ctl/ codec/
++DIROBJ = $(DIRS:%/=%-dir)
++ 
++LDFLAGS += -O2 -L$(PREFIX)/lib -lm -lc -shared -Wl,--shared -Wl,-soname,$(TARGET)$(LIB_VERSION)
++CFLAGS += -O2 -g -I$(SRC)/include -I$(SRC)/audio_ctl -I$(SRC)/codec -I$(SRC)/../amadec/include -fPIC
++ 
++export SRC CC CFLAGS LDFLAGS
++ 
++$(TARGET):$(DIROBJ)
++	$(call ld_mk,$(OUT_DIR)$@,$^)
++
++include $(SRC)/rules.mk
++ 
++CLRDIR=$(dirs:%/=%-clrdir)
++ 
++clean:$(DIRS:%/=%-clrdir)
++	-rm -rfv $(TARGET)
++ 
++install:
++	install -m 0755 -d $(PREFIX)/lib
++	install -m 0755 -d $(PREFIX)/include/amcodec
++	install -m 0755 -d $(PREFIX)/include/amports
++	install -m 0755 -d $(PREFIX)/include/ppmgr
++	install -m 0755 $(TARGET) $(PREFIX)/lib
++	install -m 0644 include/*.h $(PREFIX)/include/amcodec
++	install -m 0644 include/*.h $(PREFIX)/include
++	install -m 0644 include/amports/*.h $(PREFIX)/include/amports	
++	install -m 0644 include/ppmgr/*.h $(PREFIX)/include/ppmgr
+diff -Nur a/amcodec/rules.mk b/amcodec/rules.mk
+--- a/amcodec/rules.mk	2015-02-01 11:56:34.000000000 -0500
++++ b/amcodec/rules.mk	2015-02-01 13:00:45.148599181 -0500
+@@ -1,38 +1,32 @@
+-##
+-
+-
+ dir_mk=$(Q)echo "MAKE $(1)";\
+-	$(MAKE) -C ${1} -f ${SRCTREE}/depends.mk;\
+-	$(MAKE) -C ${1} -f ${SRCTREE}/dir.mk
++	$(MAKE) -C ${1} -f ${SRC}/depends.mk;\
++	$(MAKE) -C ${1} -f ${SRC}/dir.mk
+ 
+ c_mk=$(Q)echo "CC  $(1)";\
+ 		$(CC) $(CFLAGS)  $(EXT_CFLAGS) -c  $(1) 
+ 
+ AFLAGS=-D__ASSEMBLY__ $(CFLAGS)
++
+ s_mk=$(Q)echo "ASM $(1)";\
+ 		$(CC) $(AFLAGS) $(EXT_CFLAGS) -c $(1) 
+ 	
+-
+ ar_mk=$(Q)echo "LD $(1)";\
+ 		$(LD) -r -o build-in.o $(2:%-dir=%/build-in.o)
+ 
+-
+ ld_mk=$(Q)echo "LD $(1) $(2)  $(3)";\
+ 		$(CC) $(LDFLAGS)  \
+ 		$(2:%-dir=%/build-in.o) \
+ 		$(3:%-dir=%/build-in.o) \
+-		-o $(1) 	
+-				
++		-o $(1)
++
+ clr_mk=$(Q)echo "CLEAN  $(1)";\
+-		$(MAKE) -C ${1} -f ${SRCTREE}/clean.mk
++		$(MAKE) -C ${1} -f ${SRC}/clean.mk
+ 		
+ copy_mk=$(Q)echo "CBJCOPY  $(1) $(2)";\
+ 	$(OBJCOPY) -O binary -R .note -R .comment -S $(1) $(2)
+ 
+-
+ clean_mk=$(Q)rm -f $(1) $(2)
+ 
+-	
+ %.o:%.S
+ 	$(call s_mk,$<)
+ 
+@@ -46,10 +40,6 @@
+ 	$(call ar_mk,$@,$(obj-y:%/=%-dir))	
+ 	
+ extern-in.o:$(extern-y)
+-	
+-
+-
+-
+ 		
+ ifdef QUITE_CMD
+ Q=@
+diff -Nur a/aml.conf b/aml.conf
+--- a/aml.conf	2015-02-01 11:56:34.000000000 -0500
++++ b/aml.conf	1969-12-31 19:00:00.000000000 -0500
+@@ -1 +0,0 @@
+-/usr/lib/aml_libs
+diff -Nur a/description-pak b/description-pak
+--- a/description-pak	2015-02-01 11:56:34.000000000 -0500
++++ b/description-pak	1969-12-31 19:00:00.000000000 -0500
+@@ -1 +0,0 @@
+-AMLogic VPU Libraries for ODROID-C1
+diff -Nur a/ld.so.conf b/ld.so.conf
+--- a/ld.so.conf	2015-02-01 11:56:34.000000000 -0500
++++ b/ld.so.conf	1969-12-31 19:00:00.000000000 -0500
+@@ -1 +0,0 @@
+-/usr/lib/aml_libs
+\ No newline at end of file
+diff -Nur a/Makefile b/Makefile
+--- a/Makefile	2015-02-01 11:56:34.000000000 -0500
++++ b/Makefile	2015-02-01 12:43:59.049995906 -0500
+@@ -1,15 +1,14 @@
++PREFIX ?= /usr
++
+ all:
+ 	make -C amavutils
+ 	make -C amadec
+ 	make -C amcodec
+ 	
+ install:
+-	mkdir -p $(DESTDIR)/usr/lib/aml_libs
+ 	make -C amavutils install
+ 	make -C amadec install
+ 	make -C amcodec install
+-	install -m 0666 ld.so.conf $(DESTDIR)/usr/lib/aml_libs
+-	install -m 0666 aml.conf $(DESTDIR)/etc/ld.so.conf.d
+                 
+ clean:
+ 	make -C amavutils clean
+diff -Nur a/postinstall-pak b/postinstall-pak
+--- a/postinstall-pak	2015-02-01 11:56:34.000000000 -0500
++++ b/postinstall-pak	1969-12-31 19:00:00.000000000 -0500
+@@ -1,2 +0,0 @@
+-#!/bin/sh
+-/sbin/ldconfig

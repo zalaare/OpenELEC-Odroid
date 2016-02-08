@@ -1,0 +1,90 @@
+diff -Nur a/amadec/Makefile b/amadec/Makefile
+--- a/amadec/Makefile	2016-02-08 12:02:07.414227935 -0500
++++ b/amadec/Makefile	2016-02-08 12:03:08.034226800 -0500
+@@ -24,7 +24,7 @@
+ SRC ?= $(TOPDIR)
+ 
+ LDFLAGS += -shared -lpthread -lm -lasound -lrt
+-CFLAGS += -O2 -mlong-calls -fPIC -g
++CFLAGS += -O2 -fPIC -g
+ CFLAGS += -I$(SRC) -I$(SRC)/include -I$(SRC)/../amavutils/include -I$(SRC)/../amplayer/player/include -I$(PREFIX)/include -L$(PREFIX)/lib
+ CFLAGS += -DALSA_OUT
+ 
+diff -Nur a/amavutils/Makefile b/amavutils/Makefile
+--- a/amavutils/Makefile	2016-02-08 12:02:07.414227935 -0500
++++ b/amavutils/Makefile	2016-02-08 12:02:49.146228441 -0500
+@@ -14,15 +14,15 @@
+ SRC    = $(TOPDIR)
+ 
+ LDFLAGS += -shared -lpthread -lm -lrt
+-CFLAGS  += -O2 -mlong-calls -fPIC -g
++CFLAGS  += -O2 -fPIC -g
+ CFLAGS  += -I$(SRC) -I$(SRC)/include -I$(SRC)/../amcodec/include -L$(PREFIX)/lib -I$(PREFIX)/include
+ 
+ export CC LDFLAGS CFLAGS
+ 
+-all: $(TARGET) 
++all: $(TARGET)
+ 
+ $(TARGET): $(TARGET_OBJS)
+-	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_OBJS:%.o=%.c) -o $@  
++	$(CC) $(CFLAGS) $(LDFLAGS) $(TARGET_OBJS:%.o=%.c) -o $@
+ 
+ install:
+ 	install -m 0755 -d $(PREFIX)/lib $(PREFIX)/include/cutils
+@@ -31,5 +31,5 @@
+ 	install -m 0644 include/cutils/*.h $(PREFIX)/include/cutils
+ 
+ clean:
+-	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)    
++	-rm -rf *.o ${AMADEC_DIST} ${MP3LIB} $(PCMLIB) $(ADPCMLIB) $(AACLIB) $(A52LIB)
+ 
+diff -Nur a/amcodec/Makefile b/amcodec/Makefile
+--- a/amcodec/Makefile	2016-02-08 12:02:07.414227935 -0500
++++ b/amcodec/Makefile	2016-02-08 12:03:36.222222303 -0500
+@@ -1,29 +1,29 @@
+ PREFIX ?= /usr
+- 
++
+ TARGET = libamcodec.so
+- 
++
+ TOPDIR = $(shell pwd)
+ SRC ?= $(TOPDIR)
+ SRCTREE = $(SRC)
+- 
++
+ DIRS = audio_ctl/ codec/
+ DIROBJ = $(DIRS:%/=%-dir)
+- 
++
+ LDFLAGS += -O2 -L$(PREFIX)/lib -lm -lc -shared -Wl,--shared -Wl,-soname,$(TARGET)$(LIB_VERSION)
+ CFLAGS += -O2 -g -I$(SRC)/include -I$(SRC)/audio_ctl -I$(SRC)/codec -I$(SRC)/../amadec/include -fPIC
+- 
++
+ export SRC CC CFLAGS LDFLAGS
+- 
++
+ $(TARGET):$(DIROBJ)
+ 	$(call ld_mk,$(OUT_DIR)$@,$^)
+ 
+ include $(SRC)/rules.mk
+- 
++
+ CLRDIR=$(dirs:%/=%-clrdir)
+- 
++
+ clean:$(DIRS:%/=%-clrdir)
+ 	-rm -rfv $(TARGET)
+- 
++
+ install:
+ 	install -m 0755 -d $(PREFIX)/lib
+ 	install -m 0755 -d $(PREFIX)/include/amcodec
+@@ -32,5 +32,5 @@
+ 	install -m 0755 $(TARGET) $(PREFIX)/lib
+ 	install -m 0644 include/*.h $(PREFIX)/include/amcodec
+ 	install -m 0644 include/*.h $(PREFIX)/include
+-	install -m 0644 include/amports/*.h $(PREFIX)/include/amports	
++	install -m 0644 include/amports/*.h $(PREFIX)/include/amports
+ 	install -m 0644 include/ppmgr/*.h $(PREFIX)/include/ppmgr
