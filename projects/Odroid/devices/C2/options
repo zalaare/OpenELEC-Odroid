@@ -1,0 +1,61 @@
+################################################################################
+# setup system defaults
+################################################################################
+
+  # Setup controls which processor should be targeted for generated code. : Override
+    TARGET_ARCH=aarch64
+    TARGET_CPU="cortex-a53"
+    TARGET_FLOAT="hard"
+    TARGET_FPU="neon"
+
+  # u-boot version to use (default)
+    UBOOT_VERSION="default"
+
+  # Configuration for u-boot
+    UBOOT_CONFIG=""
+
+  # Kernel target for u-boot (default 'uImage' if BOOTLOADER=u-boot) (uImage / zImage)
+   KERNEL_UBOOT_TARGET="uImage"
+
+  # Target Configfile for u-boot
+    UBOOT_CONFIGFILE="boot.ini"
+
+  # Kernel config file
+    KERNEL_CFG_FILE="odroidc2_defconfig"
+
+  # Additional kernel make parameters (for example to specify the u-boot loadaddress)
+    KERNEL_MAKE_EXTRACMD="dtbs"
+
+################################################################################
+# setup project defaults/overrides
+################################################################################
+
+  # OpenGL-ES implementation to use : Override
+    OPENGLES="hk-opengl-mali"
+
+  # Displayserver to use : Override
+    DISPLAYSERVER="no"
+
+  # Windowmanager to use : Override
+    WINDOWMANAGER="none"
+
+  # Xorg Graphic drivers to use (all / i915,i965,r200,r300,r600,nvidia,nouveau)
+  # Space separated list is supported,
+  # e.g. GRAPHIC_DRIVERS="i915 i965 r300 r600 radeonsi nvidia nouveau"
+    GRAPHIC_DRIVERS=""
+
+    ADDITIONAL_DRIVERS=""
+
+  # additional Firmware to use : Additional
+    FIRMWARE="${FIRMWARE/samsung-firmware/}"
+
+  # KODI Player implementation to use : (odroid-mfc / odroid-amcodec)
+    KODIPLAYER_DRIVER="odroid-amcodec"
+
+  # Auto resize of Storage partition (during build of SD image) (yes / no) : Additional
+    RESIZE="yes"
+
+  # set the addon dirs
+    ADDON_PATH="$ADDON_VERSION/$PROJECT/$DEVICE"
+    ADDON_URL="$ADDON_SERVER_URL/$ADDON_PATH"
+
