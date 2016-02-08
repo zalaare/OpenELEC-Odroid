@@ -25,7 +25,7 @@ GIT_FLAGS="${GIT_FLAGS:=-q}"
 HK_GIT="https://github.com/hardkernel/u-boot"
 
 usage() {
-  echo "$0 XU3|U2|C1"
+  echo "$0 XU3|U2|C1|C2"
   echo "  ex. $0 XU3"
   exit 1
 }
@@ -79,7 +79,7 @@ package() {
       install -D hk-bootloader.git/sd_fuse/hardkernel_1mb_uboot/bl2.bin.hardkernel.1mb_uboot hk-bootloader-$VERSION/bl2.bin
       install -D hk-bootloader.git/sd_fuse/hardkernel_1mb_uboot/tzsw.bin.hardkernel hk-bootloader-$VERSION/tzsw.bin
       ;;
-    *2011.03*)
+    *2011.03*|*2015.01*)
       install -D hk-bootloader.git/sd_fuse/bl1.bin.hardkernel hk-bootloader-$VERSION/bl1.bin
       ;;
   esac
@@ -101,6 +101,7 @@ else
     U2|u2|U3|u3) BRANCH="odroid-v2010.12"    ; BUILD=U2  ;;
     XU3|xu3)     BRANCH="odroidxu3-v2012.07" ; BUILD=XU3 ;;
     C1|c1)       BRANCH="odroidc-v2011.03"   ; BUILD=C1  ;;
+    C2|c2)       BRANCH="odroidc2-v2015.01"  ; BUILD=C2  ;;
   esac
   sources $1 $2
   package $1

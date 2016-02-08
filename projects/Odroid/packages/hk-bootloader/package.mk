@@ -21,9 +21,10 @@ case $DEVICE in
   U2)  PKG_VERSION="33e05ff" ;;
   XU3) PKG_VERSION="3acd50c" ;;
   C1)  PKG_VERSION="c878e20" ;;
+  C2)  PKG_VERSION="5785ef8" ;;
 esac
 PKG_REV="1"
-PKG_ARCH="arm"
+PKG_ARCH="any"
 PKG_LICENSE="other"
 PKG_SITE="http://hardkernel.com"
 PKG_URL="$ODROID_MIRROR/$PKG_NAME-$DEVICE-$PKG_VERSION.tar.xz"
@@ -47,7 +48,7 @@ makeinstall_target() {
       install -D -m 0644 bl2.bin $INSTALL/usr/share/bootloader/bl2
       install -D -m 0644 tzsw.bin $INSTALL/usr/share/bootloader/tzsw
       ;;
-    C1)
+    C1|C2)
       install -D -m 0644 bl1.bin $INSTALL/usr/share/bootloader/bl1
       ;;
   esac
