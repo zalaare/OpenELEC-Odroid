@@ -330,6 +330,7 @@ fi
         echo "mkimage: see scripts/image and scripts/mkimage-odroid if you dont trust"
         # variables used in image script must be passed
         sudo env \
+          PATH="$PATH:/sbin" \
           ROOT="$ROOT" \
           RELEASE_DIR="$RELEASE_DIR" \
           INSTALL="$INSTALL" \
